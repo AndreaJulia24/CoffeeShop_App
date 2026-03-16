@@ -78,6 +78,18 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                 ],
               ),
+              const SizedBox(height: 20),
+              SizedBox(
+                height: 300,
+                child: ListView(
+                  scrollDirection: Axis.horizontal,
+                  padding: const EdgeInsets.only(left: 20),
+                  itemCount: allproducts.length,
+                  itemBuilder: (context, index){
+                    return CoffeeCard(coffee: allproducts[index]);
+                  }
+                )
+              )
             ],
           ),
         ),
@@ -110,7 +122,7 @@ Widget buildCategoryItem(String name, bool isSelected, VoidCallback onTap) {
     ),
   );
 }
-
+/*
 Widget buildCoffeeCards(Coffee coffee){
   return Container(
     )
