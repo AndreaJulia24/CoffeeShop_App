@@ -44,7 +44,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   const Text(
                     "Hello, Andrea Czellecz",
                     style: TextStyle(
-                      fontStyle: FontStyle.normal,
+                      fontFamily: 'Poppins',
                       fontSize: 20,
                       color: primaryWhite,
                       fontWeight: FontWeight.w700,
@@ -108,6 +108,7 @@ Widget buildCategoryItem(String name, bool isSelected, VoidCallback onTap) {
         Text(
           name,
           style: TextStyle(
+            fontFamily: 'Poppins',
             fontSize: 14,
             fontWeight: FontWeight.w500,
             color: isSelected ? secondaryBrown : primaryWhite,
