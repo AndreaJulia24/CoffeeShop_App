@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:coffee_shop/constants/colors.dart';
 import 'package:coffee_shop/models/products.dart';
+import 'package:coffee_shop/widgets/coffee_card.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -78,18 +79,19 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                 ],
               ),
-              const SizedBox(height: 20),
+              const SizedBox(height: 40), //products card list ----
               SizedBox(
                 height: 300,
-                child: ListView(
+                child: ListView.builder(
                   scrollDirection: Axis.horizontal,
-                  padding: const EdgeInsets.only(left: 20),
+                  physics: const BouncingScrollPhysics(),
+                  padding: const EdgeInsets.symmetric(horizontal: 20),
                   itemCount: allproducts.length,
-                  itemBuilder: (context, index){
+                  itemBuilder: (context, index) {
                     return CoffeeCard(coffee: allproducts[index]);
-                  }
-                )
-              )
+                  },
+                ),
+              ),
             ],
           ),
         ),
@@ -121,9 +123,4 @@ Widget buildCategoryItem(String name, bool isSelected, VoidCallback onTap) {
       ],
     ),
   );
-}
-/*
-Widget buildCoffeeCards(Coffee coffee){
-  return Container(
-    )
 }
