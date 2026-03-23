@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:coffee_shop/constants/colors.dart';
 import 'package:coffee_shop/models/products.dart';
 import 'package:coffee_shop/widgets/coffee_card.dart';
+import 'package:coffee_shop/screens/order_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -94,6 +95,14 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
             ],
           ),
+        ),
+      ),
+      floatingActionButton: FloatingActionButton(
+        backgroundColor: secondaryBrown,
+        shape: const CircleBorder(),
+        onPressed: () => Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => const OrderScreen()),
         ),
       ),
     );

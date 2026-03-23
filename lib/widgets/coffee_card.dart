@@ -22,24 +22,18 @@ class CoffeeCard extends StatelessWidget {
         children: [
           ClipRRect(
             borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
-            child: Image.asset(
+            child: Image.network(
               coffee.imageUrl,
               width: 180,
               height: 140,
               fit: BoxFit.cover,
-              errorBuilder: (context, error, stackTrace) {
-                return Container(
-                  width: 180,
-                  height: 120,
-                  color: Colors.grey,
-                  child: const Icon(Icons.broken_image, color: Colors.white),
-                );
-              },
             ),
           ),
-          const SizedBox(height: 20),
+
+          const SizedBox(height: 10),
+
           Padding(
-            padding: EdgeInsets.symmetric(horizontal: 13),
+            padding: const EdgeInsets.symmetric(horizontal: 13),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -52,7 +46,7 @@ class CoffeeCard extends StatelessWidget {
                     color: primaryWhite,
                   ),
                 ),
-                const SizedBox(height: 4),
+                SizedBox(height: 2),
                 Text(
                   coffee.description,
                   style: const TextStyle(
@@ -60,6 +54,34 @@ class CoffeeCard extends StatelessWidget {
                     fontSize: 12,
                     color: greyPrimary,
                   ),
+                ),
+              ],
+            ),
+          ),
+
+          const Spacer(),
+
+          Padding(
+            padding: const EdgeInsets.only(left: 13, right: 13, bottom: 15),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  "${coffee.price} lei",
+                  style: const TextStyle(
+                    fontFamily: 'Poppins',
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
+                  ),
+                ),
+                Container(
+                  padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    color: secondaryBrown,
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: const Icon(Icons.add, color: Colors.white, size: 20),
                 ),
               ],
             ),

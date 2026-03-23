@@ -6,3 +6,4 @@ const Color secondaryBrown = Color(0xFF755a4a);
 const Color secondaryBrownDark = Color(0xFF3d2c24);
 const Color darkBrown = Color(0xFF3d2c24);
 const Color greyPrimary = Color(0xFFa2938b);
+const Color blackBrown = Color(0xFF36251d);
