@@ -218,7 +218,8 @@ class _OrderScreenState extends State<OrderScreen> {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => const FavoritesScreen(),
+                    builder: (context) =>
+                        const FavoritesScreen(favoriteItems: []),
                   ),
                 );
               },

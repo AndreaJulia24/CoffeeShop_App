@@ -5,7 +5,7 @@ import 'package:coffee_shop/models/products.dart';
 class FavoritesScreen extends StatelessWidget {
   //final Coffee coffee;
 
-  const FavoritesScreen({super.key});
+  const FavoritesScreen({super.key, required List<Coffee> favoriteItems});
 
   @override
   Widget build(BuildContext context) {

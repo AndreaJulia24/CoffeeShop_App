@@ -3,7 +3,6 @@ import 'package:coffee_shop/screens/order_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:coffee_shop/constants/colors.dart';
 import 'package:coffee_shop/models/products.dart';
-import 'package:coffee_shop/widgets/coffee_card.dart';
 import 'package:coffee_shop/models/users.dart';
 import 'package:coffee_shop/screens/shoppingcart_screen.dart';
 import 'package:coffee_shop/screens/profile_screen.dart';
@@ -206,17 +205,25 @@ class _HomeScreenState extends State<HomeScreen> {
                 padding: const EdgeInsets.symmetric(horizontal: 20),
                 itemCount: filteredProducts.length,
                 itemBuilder: (context, index) {
-                      return GestureDetector(
-                        onTap: () {
-                          Navigator.push(context, MaterialPageRoute(builder: (context)=>OrderScreen(coffee: filteredProducts[index],
-                          addingIntoCart: () => addToCart(filteredProducts[index]),
-                          invertFavorite: () => invertFavorite(filteredProducts[index]),
-                          isFavorite: favoritesItems.contains(filteredProducts[index]),
+                  return GestureDetector(
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => OrderScreen(
+                            coffee: filteredProducts[index],
+                            addingIntoCart: () =>
+                                addToCart(filteredProducts[index]),
+                            invertFavorite: () =>
+                                invertFavorite(filteredProducts[index]),
+                            isFavorite: favoritesItems.contains(
+                              filteredProducts[index],
+                            ),
                           ),
                         ),
                       );
                     },
-                  ),
+                  );
                 },
               ),
             ),
