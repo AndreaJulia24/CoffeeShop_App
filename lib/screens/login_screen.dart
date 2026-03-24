@@ -1,9 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:coffee_shop/constants/colors.dart';
 import 'package:coffee_shop/screens/home_screen.dart';
+import 'package:coffee_shop/models/users.dart';
 
-class LoginScreen extends StatelessWidget {
+class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
+
+  @override
+  State<LoginScreen> createState() => _LoginScreenState();
+}
+
+class _LoginScreenState extends State<LoginScreen> {
+  final nameController = TextEditingController();
+  final emailController = TextEditingController();
+  final passwordController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -34,11 +44,29 @@ class LoginScreen extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 50),
-              //email
+              //name
               TextField(
+                controller: nameController,
                 style: const TextStyle(color: primaryWhite),
                 decoration: InputDecoration(
-                  hintText: "Email",
+                  hintText: "Full name",
+                  hintStyle: const TextStyle(color: greyPrimary),
+                  filled: true,
+                  fillColor: darkBrown,
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(16),
+                    borderSide: BorderSide.none,
+                  ),
+                  prefixIcon: const Icon(Icons.person, color: greyPrimary),
+                ),
+              ),
+              const SizedBox(height: 20),
+              //email
+              TextField(
+                controller: emailController,
+                style: const TextStyle(color: primaryWhite),
+                decoration: InputDecoration(
+                  hintText: "Email address",
                   hintStyle: const TextStyle(color: greyPrimary),
                   filled: true,
                   fillColor: darkBrown,
@@ -52,6 +80,7 @@ class LoginScreen extends StatelessWidget {
               const SizedBox(height: 20),
               //password
               TextField(
+                controller: passwordController,
                 obscureText: true,
                 style: const TextStyle(color: primaryWhite),
                 decoration: InputDecoration(
@@ -79,12 +108,23 @@ class LoginScreen extends StatelessWidget {
                     ),
                   ),
                   onPressed: () {
-                    Navigator.pushReplacement(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => const HomeScreen(),
-                      ),
-                    );
+                    if (nameController.text.isNotEmpty &&
+                        emailController.text.isNotEmpty &&
+                        passwordController.text.isNotEmpty) {
+                      Users user = Users(
+                        name: nameController.text,
+                        email: emailController.text,
+                        pasword: passwordController.text,
+                        profileImage: '',
+                      );
+
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => HomeScreen(users: user),
+                        ),
+                      );
+                    }
                   },
                   child: const Text(
                     "Login",

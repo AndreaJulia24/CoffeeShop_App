@@ -5,8 +5,17 @@ import 'package:coffee_shop/models/products.dart';
 
 class OrderScreen extends StatefulWidget {
   final Coffee coffee;
+  final VoidCallback addingIntoCart;
+  final VoidCallback invertFavorite;
+  final bool isFavorite;
 
-  const OrderScreen({super.key, required this.coffee});
+  const OrderScreen({
+    super.key,
+    required this.coffee,
+    required this.addingIntoCart,
+    required this.invertFavorite,
+    required this.isFavorite,
+  });
 
   @override
   State<OrderScreen> createState() => _OrderScreenState();
@@ -39,8 +48,13 @@ class _OrderScreenState extends State<OrderScreen> {
         centerTitle: true,
         actions: [
           IconButton(
-            icon: const Icon(Icons.favorite_border, color: primaryWhite),
-            onPressed: () => {},
+            icon: Icon(
+              widget.isFavorite ? Icons.favorite : Icons.favorite_border,
+            ),
+            color: widget.isFavorite ? primaryRed : primaryWhite,
+            onPressed: () {
+              widget.invertFavorite();
+            },
           ),
         ],
       ),
@@ -159,6 +173,32 @@ class _OrderScreenState extends State<OrderScreen> {
                   ),
                 ),
               ],
+            ),
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: secondaryBrown,
+                minimumSize: const Size(180, 55),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadiusGeometry.circular(16),
+                ),
+              ),
+              onPressed: () {
+                widget.addingIntoCart();
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text("${widget.coffee.name} added to cart."),
+                    backgroundColor: secondaryBrown,
+                  ),
+                );
+              },
+              child: Text(
+                "Add to cart",
+                style: TextStyle(
+                  color: primaryWhite,
+                  fontSize: 16,
+                  fontWeight: FontWeight.w900,
+                ),
+              ),
             ),
             //favorites screen button --navigatiooon
             TextButton(

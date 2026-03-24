@@ -5,8 +5,9 @@ import 'package:coffee_shop/models/products.dart';
 
 class CoffeeCard extends StatelessWidget {
   final Coffee coffee;
+  final VoidCallback onAddTap;
 
-  const CoffeeCard({super.key, required this.coffee});
+  const CoffeeCard({super.key, required this.coffee, required this.onAddTap});
 
   @override
   Widget build(BuildContext context) {
@@ -91,7 +92,11 @@ class CoffeeCard extends StatelessWidget {
                       color: secondaryBrown,
                       borderRadius: BorderRadius.circular(10),
                     ),
-                    child: const Icon(Icons.add, color: Colors.white, size: 20),
+                    child: const Icon(
+                      Icons.details,
+                      color: Colors.white,
+                      size: 20,
+                    ),
                   ),
                 ),
               ],
