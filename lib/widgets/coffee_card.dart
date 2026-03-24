@@ -5,8 +5,14 @@ import 'package:coffee_shop/models/products.dart';
 class CoffeeCard extends StatelessWidget {
   final Coffee coffee;
   final VoidCallback onAddTap;
+  final VoidCallback onDetailsTap;
 
-  const CoffeeCard({super.key, required this.coffee, required this.onAddTap});
+  const CoffeeCard({
+    super.key,
+    required this.coffee,
+    required this.onAddTap,
+    required this.onDetailsTap,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -77,14 +83,18 @@ class CoffeeCard extends StatelessWidget {
                   ),
                 ),
                 GestureDetector(
-                  onTap: onAddTap,
+                  onTap: onDetailsTap,
                   child: Container(
                     padding: const EdgeInsets.all(8),
                     decoration: BoxDecoration(
                       color: secondaryBrown,
                       borderRadius: BorderRadius.circular(10),
                     ),
-                    child: const Icon(Icons.add, color: Colors.white, size: 20),
+                    child: const Icon(
+                      Icons.arrow_forward_ios,
+                      color: Colors.white,
+                      size: 20,
+                    ),
                   ),
                 ),
               ],

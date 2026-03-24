@@ -137,6 +137,7 @@ class _OrderScreenState extends State<OrderScreen> {
                       buildSizeButton('L'),
                     ],
                   ),
+                  const SizedBox(height: 15),
                 ],
               ),
             ),
@@ -147,9 +148,10 @@ class _OrderScreenState extends State<OrderScreen> {
         padding: const EdgeInsets.symmetric(horizontal: 25.0, vertical: 20),
         height: 110,
         decoration: BoxDecoration(
-          color: primaryBrown,
+          color: darkBrown,
+          borderRadius: const BorderRadius.vertical(top: Radius.circular(30)),
           border: Border(
-            top: BorderSide(color: lightBrown.withOpacity(0.1), width: 1),
+            top: BorderSide(color: lightBrown.withValues(alpha: 0.1)),
           ),
         ),
         child: Row(
@@ -168,7 +170,7 @@ class _OrderScreenState extends State<OrderScreen> {
                   "${widget.coffee.price.toStringAsFixed(2)} lei",
                   style: const TextStyle(
                     color: primaryWhite,
-                    fontSize: 20,
+                    fontSize: 24,
                     fontWeight: FontWeight.w800,
                   ),
                 ),
@@ -177,17 +179,19 @@ class _OrderScreenState extends State<OrderScreen> {
             ElevatedButton(
               style: ElevatedButton.styleFrom(
                 backgroundColor: secondaryBrown,
-                minimumSize: const Size(180, 55),
+                minimumSize: const Size(200, 60),
+                elevation: 5,
                 shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadiusGeometry.circular(16),
+                  borderRadius: BorderRadiusGeometry.circular(20),
                 ),
               ),
               onPressed: () {
                 widget.addingIntoCart();
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(
-                    content: Text("${widget.coffee.name} added to cart."),
+                    content: Text("${widget.coffee.name} added to cart!"),
                     backgroundColor: secondaryBrown,
+                    duration: const Duration(seconds: 1),
                   ),
                 );
               },
@@ -195,40 +199,8 @@ class _OrderScreenState extends State<OrderScreen> {
                 "Add to cart",
                 style: TextStyle(
                   color: primaryWhite,
-                  fontSize: 16,
+                  fontSize: 18,
                   fontWeight: FontWeight.w900,
-                ),
-              ),
-            ),
-            //favorites screen button --navigatiooon
-            TextButton(
-              style: TextButton.styleFrom(
-                backgroundColor: secondaryBrown,
-                minimumSize: Size(10, 20),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadiusGeometry.circular(16),
-                ),
-                elevation: 0,
-              ),
-              onPressed: () {
-                if (!favoritesCoffees.contains(widget.coffee)) {
-                  favoritesCoffees.add(widget.coffee);
-                }
-
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) =>
-                        const FavoritesScreen(favoriteItems: []),
-                  ),
-                );
-              },
-              child: const Text(
-                "Add to Favorites",
-                style: TextStyle(
-                  color: primaryWhite,
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
                 ),
               ),
             ),
