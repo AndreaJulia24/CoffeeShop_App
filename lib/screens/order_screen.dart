@@ -1,58 +1,228 @@
+import 'package:coffee_shop/screens/favorites_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:coffee_shop/constants/colors.dart';
-//import 'package:coffee_shop/models/products.dart';
-//import 'package:coffee_shop/widgets/coffee_card.dart';
+import 'package:coffee_shop/models/products.dart';
 
-class OrderScreen extends StatelessWidget {
-  const OrderScreen({super.key});
+class OrderScreen extends StatefulWidget {
+  final Coffee coffee;
+
+  const OrderScreen({super.key, required this.coffee});
+
+  @override
+  State<OrderScreen> createState() => _OrderScreenState();
+}
+
+class _OrderScreenState extends State<OrderScreen> {
+  int quantity = 1;
+  bool isFavorite = false;
+  String selectedSize = 'M';
+
+  final List<String> sizes = ['S', 'M', 'L'];
+
+  double get totalPrice => widget.coffee.price * quantity;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: blackBrown,
-      body: Column(
-        children: [
-          Container(
-            padding: const EdgeInsets.only(top: 15, bottom: 15),
-            width: double.infinity,
-            decoration: BoxDecoration(
-              color: secondaryBrown,
-              borderRadius: const BorderRadius.vertical(
-                bottom: Radius.circular(25),
+      backgroundColor: primaryBrown,
+      appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back_ios_new, color: primaryWhite),
+          onPressed: () => Navigator.pop(context),
+        ),
+        title: const Text(
+          "Details",
+          style: TextStyle(fontWeight: FontWeight.w800, color: primaryWhite),
+        ),
+        centerTitle: true,
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.favorite_border, color: primaryWhite),
+            onPressed: () => {},
+          ),
+        ],
+      ),
+      body: SingleChildScrollView(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            //----------a kep berakva hozza--------------
+            Padding(
+              padding: const EdgeInsets.all(25.0),
+              child: ClipRRect(
+                borderRadius: BorderRadiusGeometry.circular(16),
+                child: Image.network(
+                  widget.coffee.imageUrl,
+                  height: 220,
+                  width: double.infinity,
+                  fit: BoxFit.cover,
+                ),
               ),
             ),
-            child: Column(
-              children: [
-                Container(
-                  width: 40,
-                  height: 4,
-                  decoration: BoxDecoration(
-                    color: greyPrimary,
-                    borderRadius: BorderRadius.circular(10),
+            //--------------nev es leiras------------------
+            Padding(
+              padding: const EdgeInsetsGeometry.symmetric(horizontal: 25.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    widget.coffee.name,
+                    style: const TextStyle(
+                      fontSize: 24,
+                      fontWeight: FontWeight.bold,
+                      color: primaryWhite,
+                    ),
                   ),
-                ),
-                const SizedBox(height: 10),
+                  const SizedBox(height: 8),
+                  Row(
+                    children: [
+                      const Icon(Icons.star, color: goldBrown, size: 20),
+                      const SizedBox(width: 4),
+                      Text(
+                        widget.coffee.rating.toString(),
+                        style: const TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                          color: secondaryBrown,
+                        ),
+                      ),
+                    ],
+                  ),
+                  const Divider(height: 40, thickness: 1.0, color: brownie),
+                  const SizedBox(height: 10),
+                  Text(
+                    'Description',
+                    style: TextStyle(
+                      fontSize: 30,
+                      fontWeight: FontWeight.w800,
+                      color: primaryWhite,
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                  Text(
+                    widget.coffee.description,
+                    style: TextStyle(fontSize: 15, color: greyPrimary),
+                  ),
+                  const SizedBox(height: 25),
+                  const Text(
+                    "Size",
+                    style: TextStyle(
+                      fontSize: 30,
+                      fontWeight: FontWeight.bold,
+                      color: primaryWhite,
+                    ),
+                  ),
+                  const SizedBox(height: 15),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      buildSizeButton('S'),
+                      buildSizeButton('M'),
+                      buildSizeButton('L'),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+      bottomNavigationBar: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 25.0, vertical: 20),
+        height: 110,
+        decoration: BoxDecoration(
+          color: primaryBrown,
+          border: Border(
+            top: BorderSide(color: lightBrown.withOpacity(0.1), width: 1),
+          ),
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
                 const Text(
-                  'Order',
-                  style: TextStyle(
+                  'Price',
+                  style: TextStyle(color: greyPrimary, fontSize: 15),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  "${widget.coffee.price.toStringAsFixed(2)} lei",
+                  style: const TextStyle(
                     color: primaryWhite,
-                    fontSize: 10,
-                    fontWeight: FontWeight.bold,
-                    fontFamily: 'Poppins',
+                    fontSize: 20,
+                    fontWeight: FontWeight.w800,
                   ),
                 ),
               ],
             ),
-          ),
-          const Expanded(
-            child: Center(
-              child: Text(
-                "There will be the products",
-                style: TextStyle(color: greyPrimary),
+            //favorites screen button --navigatiooon
+            TextButton(
+              style: TextButton.styleFrom(
+                backgroundColor: secondaryBrown,
+                minimumSize: Size(10, 20),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadiusGeometry.circular(16),
+                ),
+                elevation: 0,
+              ),
+              onPressed: () {
+                if (!favoritesCoffees.contains(widget.coffee)) {
+                  favoritesCoffees.add(widget.coffee);
+                }
+
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const FavoritesScreen(),
+                  ),
+                );
+              },
+              child: const Text(
+                "Add to Favorites",
+                style: TextStyle(
+                  color: primaryWhite,
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget buildSizeButton(String size) {
+    bool isSelected = selectedSize == size;
+
+    return TextButton(
+      style: TextButton.styleFrom(
+        side: BorderSide(
+          color: isSelected ? secondaryBrown : greyPrimary.withOpacity(0.5),
+          width: 1.5,
+        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 15),
+        backgroundColor: isSelected
+            ? lightBrown.withOpacity(0.1)
+            : Colors.transparent,
+      ),
+      onPressed: () {
+        setState(() {
+          selectedSize = size;
+        });
+      },
+      child: Text(
+        size,
+        style: TextStyle(
+          color: isSelected ? secondaryBrown : primaryWhite,
+          fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+        ),
       ),
     );
   }

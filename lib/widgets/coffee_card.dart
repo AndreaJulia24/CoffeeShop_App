@@ -1,4 +1,5 @@
 import 'package:coffee_shop/constants/colors.dart';
+import 'package:coffee_shop/screens/order_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:coffee_shop/models/products.dart';
 
@@ -75,13 +76,23 @@ class CoffeeCard extends StatelessWidget {
                     color: Colors.white,
                   ),
                 ),
-                Container(
-                  padding: const EdgeInsets.all(8),
-                  decoration: BoxDecoration(
-                    color: secondaryBrown,
-                    borderRadius: BorderRadius.circular(10),
+                GestureDetector(
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => OrderScreen(coffee: coffee),
+                      ),
+                    );
+                  },
+                  child: Container(
+                    padding: const EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                      color: secondaryBrown,
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: const Icon(Icons.add, color: Colors.white, size: 20),
                   ),
-                  child: const Icon(Icons.add, color: Colors.white, size: 20),
                 ),
               ],
             ),

@@ -1,14 +1,18 @@
+List<Coffee> favoritesCoffees = [];
+
 class Coffee {
   final String name;
   final String description;
   final double price;
   final String imageUrl;
+  final double rating;
 
   Coffee({
     required this.name,
     required this.description,
     required this.price,
     required this.imageUrl,
+    required this.rating,
   });
 }
 
@@ -19,6 +23,7 @@ List<Coffee> allproducts = [
     price: 5.50,
     imageUrl:
         'https://www.sharmispassions.com/wp-content/uploads/2012/07/espresso-coffee-recipe022.jpg',
+    rating: 4.5,
   ),
   Coffee(
     name: 'Cappuccino',
@@ -26,6 +31,7 @@ List<Coffee> allproducts = [
     price: 10.00,
     imageUrl:
         'https://images.ctfassets.net/0e6jqcgsrcye/6Dnzkf1ylG7IxDRG9Ez1Ia/0db4f0be1ff6199ae89afa4a0ae26687/How_to_make_a_perfect_cappuccino_at_home.jpg',
+    rating: 3.5,
   ),
   Coffee(
     name: 'Latte Macchiato',
@@ -33,6 +39,7 @@ List<Coffee> allproducts = [
     price: 12.00,
     imageUrl:
         'https://podmkr.com/wp-content/uploads/2023/11/latte-macchiato.png',
+    rating: 5.0,
   ),
   Coffee(
     name: 'Caramel Frappucino',
@@ -40,5 +47,6 @@ List<Coffee> allproducts = [
     price: 15.50,
     imageUrl:
         'https://images.immediate.co.uk/production/volatile/sites/30/2025/07/GoodFoodFrappe-8757348.jpg',
+    rating: 2.0,
   ),
 ];

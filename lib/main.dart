@@ -1,4 +1,6 @@
 import 'package:coffee_shop/screens/home_screen.dart';
+import 'package:coffee_shop/screens/welcome_screen.dart';
+import 'package:coffee_shop/screens/login_screen.dart';
 import 'package:flutter/material.dart';
 import 'dart:ui';
 
@@ -37,7 +39,7 @@ class MyApp extends StatelessWidget {
         colorScheme: .fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      home: HomeScreen(),
+      home: WelcomeScreen(),
     );
   }
 }
