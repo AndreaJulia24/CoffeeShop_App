@@ -82,7 +82,7 @@ class CoffeeCard extends StatelessWidget {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => OrderScreen(coffee: coffee),
+                        builder: (context) => OrderScreen(coffee: coffee, addingIntoCart: () {  }, invertFavorite: () {  }, isFavorite: false,),
                       ),
                     );
                   },
@@ -92,11 +92,7 @@ class CoffeeCard extends StatelessWidget {
                       color: secondaryBrown,
                       borderRadius: BorderRadius.circular(10),
                     ),
-                    child: const Icon(
-                      Icons.details,
-                      color: Colors.white,
-                      size: 20,
-                    ),
+                    child: const Icon(Icons.add, color: Colors.white, size: 20),
                   ),
                 ),
               ],
