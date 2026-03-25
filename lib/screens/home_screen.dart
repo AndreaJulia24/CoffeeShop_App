@@ -8,6 +8,7 @@ import 'package:coffee_shop/models/users.dart';
 import 'package:coffee_shop/screens/shoppingcart_screen.dart';
 import 'package:coffee_shop/screens/profile_screen.dart';
 import 'package:coffee_shop/network/firebase_service.dart';
+import 'dart:math';
 
 class HomeScreen extends StatefulWidget {
   final Users users;
@@ -39,6 +40,7 @@ class _HomeScreenState extends State<HomeScreen> {
   List<Coffee> filteredProducts = [];
   final FirebaseService firebaseService = FirebaseService();
   late Future<List<Coffee>> coffeesFuture;
+  late Future<List<Coffee>> specialOffer;
 
   @override
   void initState() {
@@ -46,6 +48,7 @@ class _HomeScreenState extends State<HomeScreen> {
     //filteredProducts = allproducts;
     coffeesFuture = firebaseService
         .getCoffees(); //itt inditja el a lekerest a firebasebol
+    specialOffer = firebaseService.getSpecialOffer();
   }
 
   void runFilter(String enteredKeyword) {
