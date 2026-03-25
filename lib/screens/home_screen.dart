@@ -7,6 +7,7 @@ import 'package:coffee_shop/models/products.dart';
 import 'package:coffee_shop/models/users.dart';
 import 'package:coffee_shop/screens/shoppingcart_screen.dart';
 import 'package:coffee_shop/screens/profile_screen.dart';
+import 'package:coffee_shop/network/firebase_service.dart';
 
 class HomeScreen extends StatefulWidget {
   final Users users;
@@ -36,11 +37,15 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   List<Coffee> filteredProducts = [];
+  final FirebaseService firebaseService = FirebaseService();
+  late Future<List<Coffee>> coffeesFuture;
 
   @override
   void initState() {
     super.initState();
     filteredProducts = allproducts;
+    coffeesFuture = firebaseService
+        .getCoffees(); //itt inditja el a lekerest a firebasebol
   }
 
   void runFilter(String enteredKeyword) {
@@ -193,32 +198,60 @@ class _HomeScreenState extends State<HomeScreen> {
             const SizedBox(height: 30), //products card list ----
             SizedBox(
               height: 300,
-              child: ListView.builder(
-                scrollDirection: Axis.horizontal,
-                physics: const BouncingScrollPhysics(),
-                padding: const EdgeInsets.symmetric(horizontal: 20),
-                itemCount: filteredProducts.length,
-                itemBuilder: (context, index) {
-                  return CoffeeCard(
-                    coffee: filteredProducts[index],
-                    onAddTap: () => addToCart(filteredProducts[index]),
-                    onDetailsTap: () async {
-                      await Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => OrderScreen(
-                            coffee: filteredProducts[index],
-                            addingIntoCart: () =>
-                                addToCart(filteredProducts[index]),
-                            invertFavorite: () =>
-                                invertFavorite(filteredProducts[index]),
-                            isFavorite: favoritesItems.contains(
-                              filteredProducts[index],
+              child: FutureBuilder(
+                future: coffeesFuture,
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return const Center(
+                      child: CircularProgressIndicator(color: secondaryBrown),
+                    );
+                  }
+                  if (snapshot.hasError) {
+                    return const Center(
+                      child: Text(
+                        "Error loading coffees",
+                        style: TextStyle(color: primaryWhite),
+                      ),
+                    );
+                  }
+                  final coffees = snapshot.data ?? [];
+
+                  if (coffees.isEmpty) {
+                    return const Center(
+                      child: Text(
+                        "There is none available coffees.",
+                        style: TextStyle(color: primaryWhite),
+                      ),
+                    );
+                  }
+                  return ListView.builder(
+                    scrollDirection: Axis.horizontal,
+                    physics: const BouncingScrollPhysics(),
+                    padding: const EdgeInsets.symmetric(horizontal: 20),
+                    itemCount: filteredProducts.length,
+                    itemBuilder: (context, index) {
+                      return CoffeeCard(
+                        coffee: filteredProducts[index],
+                        onAddTap: () => addToCart(filteredProducts[index]),
+                        onDetailsTap: () async {
+                          await Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => OrderScreen(
+                                coffee: filteredProducts[index],
+                                addingIntoCart: () =>
+                                    addToCart(filteredProducts[index]),
+                                invertFavorite: () =>
+                                    invertFavorite(filteredProducts[index]),
+                                isFavorite: favoritesItems.contains(
+                                  filteredProducts[index],
+                                ),
+                              ),
                             ),
-                          ),
-                        ),
+                          );
+                          setState(() {});
+                        },
                       );
-                      setState(() {});
                     },
                   );
                 },
