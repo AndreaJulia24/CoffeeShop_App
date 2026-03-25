@@ -37,21 +37,10 @@ class _HomeScreenState extends State<HomeScreen> {
 
   List<Coffee> filteredProducts = [];
 
-  late List<Widget> screens;
-
   @override
   void initState() {
     super.initState();
     filteredProducts = allproducts;
-
-    screens = [
-      buildHomeContent(), //0. index -homescreen
-      const Center(
-        child: Text("Favorites", style: TextStyle(color: primaryWhite)),
-      ), //1.index
-      CartScreen(cartItems: cartItems), //2. index
-      ProfileScreen(users: widget.users), //3. index profilee
-    ];
   }
 
   void runFilter(String enteredKeyword) {
@@ -98,8 +87,12 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    screens[1] = FavoritesScreen(favoriteItems: favoritesItems);
-    screens[2] = CartScreen(cartItems: cartItems);
+    final List<Widget> screens = [
+      buildHomeContent(), //0. index -homescreen
+      FavoritesScreen(favoriteItems: favoritesItems), //1.index
+      CartScreen(cartItems: cartItems), //2. index
+      ProfileScreen(users: widget.users), //3. index profilee
+    ];
 
     return Scaffold(
       body: SafeArea(child: screens[selectedIndex]),

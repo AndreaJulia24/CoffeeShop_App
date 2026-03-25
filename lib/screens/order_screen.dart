@@ -54,6 +54,14 @@ class _OrderScreenState extends State<OrderScreen> {
             color: widget.isFavorite ? primaryRed : primaryWhite,
             onPressed: () {
               widget.invertFavorite();
+
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text("${widget.coffee.name} added to favorites!"),
+                ),
+              );
+
+              Navigator.pop(context);
             },
           ),
         ],
@@ -137,7 +145,6 @@ class _OrderScreenState extends State<OrderScreen> {
                       buildSizeButton('L'),
                     ],
                   ),
-                  const SizedBox(height: 15),
                 ],
               ),
             ),
