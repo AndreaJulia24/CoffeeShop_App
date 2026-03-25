@@ -202,21 +202,24 @@ class _HomeScreenState extends State<HomeScreen> {
                   return CoffeeCard(
                     coffee: filteredProducts[index],
                     onAddTap: () => addToCart(filteredProducts[index]),
-                    onDetailsTap: () => Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => OrderScreen(
-                          coffee: filteredProducts[index],
-                          addingIntoCart: () =>
-                              addToCart(filteredProducts[index]),
-                          invertFavorite: () =>
-                              invertFavorite(filteredProducts[index]),
-                          isFavorite: favoritesItems.contains(
-                            filteredProducts[index],
+                    onDetailsTap: () async {
+                      await Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => OrderScreen(
+                            coffee: filteredProducts[index],
+                            addingIntoCart: () =>
+                                addToCart(filteredProducts[index]),
+                            invertFavorite: () =>
+                                invertFavorite(filteredProducts[index]),
+                            isFavorite: favoritesItems.contains(
+                              filteredProducts[index],
+                            ),
                           ),
                         ),
-                      ),
-                    ),
+                      );
+                      setState(() {});
+                    },
                   );
                 },
               ),

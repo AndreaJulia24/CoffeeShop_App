@@ -1,4 +1,3 @@
-import 'package:coffee_shop/screens/favorites_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:coffee_shop/constants/colors.dart';
 import 'package:coffee_shop/models/products.dart';

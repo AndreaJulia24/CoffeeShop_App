@@ -4,8 +4,9 @@ import 'package:coffee_shop/models/products.dart';
 
 class FavoritesScreen extends StatelessWidget {
   //final Coffee coffee;
+  final List<Coffee> favoriteItems;
 
-  const FavoritesScreen({super.key, required List<Coffee> favoriteItems});
+  const FavoritesScreen({super.key, required this.favoriteItems});
 
   @override
   Widget build(BuildContext context) {
@@ -30,7 +31,7 @@ class FavoritesScreen extends StatelessWidget {
       ),
       body: Padding(
         padding: const EdgeInsetsGeometry.symmetric(horizontal: 25.0),
-        child: favoritesCoffees.isEmpty
+        child: favoriteItems.isEmpty
             ? const Center(
                 child: Text(
                   "You don't have favorites!",
@@ -39,9 +40,9 @@ class FavoritesScreen extends StatelessWidget {
               )
             : Expanded(
                 child: ListView.builder(
-                  itemCount: favoritesCoffees.length,
+                  itemCount: favoriteItems.length,
                   itemBuilder: (context, index) {
-                    return buildFavoriteCard(favoritesCoffees[index]);
+                    return buildFavoriteCard(favoriteItems[index]);
                   },
                 ),
               ),
