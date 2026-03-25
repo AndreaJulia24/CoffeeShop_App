@@ -22,6 +22,16 @@ class _HomeScreenState extends State<HomeScreen> {
   int selectedIndex = 0;
   List<Coffee> cartItems = [];
   List<Coffee> favoritesItems = [];
+  final Random random = Random();
+
+  void loadDailySpecial() async {
+    List<Coffee> offers = await firebaseService.getSpecialOffer();
+    if (offers.isNotEmpty) {
+      setState(() {
+        specialOffer = offers[random.nextInt(offers.length)];
+      });
+    }
+  }
 
   bool _isCoffeesSelected = true;
   bool _isTeasSelected = false;
@@ -40,7 +50,7 @@ class _HomeScreenState extends State<HomeScreen> {
   List<Coffee> filteredProducts = [];
   final FirebaseService firebaseService = FirebaseService();
   late Future<List<Coffee>> coffeesFuture;
-  late Future<List<Coffee>> specialOffer;
+  Coffee? specialOffer;
 
   @override
   void initState() {
@@ -48,7 +58,7 @@ class _HomeScreenState extends State<HomeScreen> {
     //filteredProducts = allproducts;
     coffeesFuture = firebaseService
         .getCoffees(); //itt inditja el a lekerest a firebasebol
-    specialOffer = firebaseService.getSpecialOffer();
+    loadDailySpecial();
   }
 
   void runFilter(String enteredKeyword) {
@@ -171,7 +181,7 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
             ),
             const SizedBox(height: 25),
-            buildSpecialOfferCard(),
+            if (specialOffer != null) buildSpecialOfferCard(specialOffer!),
             const SizedBox(height: 25),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -272,7 +282,7 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 }
 
-Widget buildSpecialOfferCard() {
+Widget buildSpecialOfferCard(Coffee offer) {
   return Container(
     margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
     padding: const EdgeInsets.all(15),
@@ -286,7 +296,7 @@ Widget buildSpecialOfferCard() {
         ClipRRect(
           borderRadius: BorderRadiusGeometry.circular(15),
           child: Image.network(
-            'https://cdn.loveandlemons.com/wp-content/uploads/2023/06/iced-matcha-latte.jpg',
+            offer.imageUrl,
             width: 120,
             height: 110,
             fit: BoxFit.cover,
@@ -296,25 +306,43 @@ Widget buildSpecialOfferCard() {
         Expanded(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.start,
             children: [
               //speciall offer
               Container(
                 padding: const EdgeInsets.symmetric(
-                  horizontal: 20,
-                  vertical: 5,
+                  horizontal: 10,
+                  vertical: 4,
                 ),
                 decoration: BoxDecoration(
                   color: primaryRed,
-                  borderRadius: BorderRadius.circular(10),
+                  borderRadius: BorderRadius.circular(8),
                 ),
                 child: const Text(
                   "Today's special offer",
                   style: TextStyle(
                     color: primaryWhite,
                     fontWeight: FontWeight.w800,
-                    fontSize: 12,
+                    fontSize: 10,
                   ),
+                ),
+              ),
+              const SizedBox(height: 8),
+              Text(
+                offer.name,
+                style: const TextStyle(
+                  color: primaryWhite,
+                  fontSize: 16,
+                  fontWeight: FontWeight.w800,
+                ),
+              ),
+              const Spacer(),
+              Text(
+                "${offer.price.toStringAsFixed(2)} lei",
+                style: const TextStyle(
+                  color: primaryWhite,
+                  fontSize: 16,
+                  fontWeight: FontWeight.w800,
                 ),
               ),
             ],
