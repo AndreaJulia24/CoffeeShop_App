@@ -43,7 +43,7 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     super.initState();
-    filteredProducts = allproducts;
+    //filteredProducts = allproducts;
     coffeesFuture = firebaseService
         .getCoffees(); //itt inditja el a lekerest a firebasebol
   }
@@ -215,6 +215,11 @@ class _HomeScreenState extends State<HomeScreen> {
                     );
                   }
                   final coffees = snapshot.data ?? [];
+
+                  if (allproducts.isEmpty && coffees.isNotEmpty) {
+                    allproducts.addAll(coffees);
+                    filteredProducts = allproducts;
+                  }
 
                   if (coffees.isEmpty) {
                     return const Center(
