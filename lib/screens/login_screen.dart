@@ -115,7 +115,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         passwordController.text.isNotEmpty) {
                       final userProvider = context.read<UserProvider>();
 
-                      await userProvider.login(
+                      final result = await userProvider.login(
                         emailController.text,
                         passwordController.text,
                       );
@@ -129,10 +129,17 @@ class _LoginScreenState extends State<LoginScreen> {
 
                       if (!context.mounted) return; //meg mindig a kepernyon?
 
+                      if (result == true) {}
                       Navigator.pushReplacement(
                         context,
                         MaterialPageRoute(
                           builder: (context) => HomeScreen(users: user),
+                        ),
+                      );
+                    } else {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text("Unsuccessful login.Check your data."),
                         ),
                       );
                     }

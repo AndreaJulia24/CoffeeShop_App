@@ -2,6 +2,8 @@ import 'package:coffee_shop/screens/login_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:coffee_shop/models/users.dart';
 import 'package:coffee_shop/constants/colors.dart';
+import 'package:coffee_shop/provider/user_provider.dart';
+import 'package:provider/provider.dart';
 
 class ProfileScreen extends StatelessWidget {
   final Users users;
@@ -10,6 +12,7 @@ class ProfileScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final userProvider = context.watch<UserProvider>().currentUser;
     return Scaffold(
       backgroundColor: primaryBrown,
       appBar: AppBar(title: const Text("Profile"), backgroundColor: darkBrown),
@@ -20,7 +23,7 @@ class ProfileScreen extends StatelessWidget {
             const CircleAvatar(
               radius: 50,
               backgroundColor: secondaryBrown,
-              child: Icon(Icons.person, size: 50, color: primaryWhite),
+              backgroundImage: ,
             ),
             SizedBox(height: 20),
             Text(
