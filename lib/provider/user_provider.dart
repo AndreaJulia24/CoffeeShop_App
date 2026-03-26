@@ -1,47 +1,39 @@
 import 'package:coffee_shop/network/apiclient.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
-import 'package:coffee_shop/models/users.dart';
 
 class UserProvider extends ChangeNotifier {
   final Apiclient apiclient = Apiclient();
 
-  Users? currentUser;
-  bool isLoading = false;
+  Map<String, dynamic>? user; //user adatainak tarolasa
 
-  //---login,bejelentkezo logika
+  Map<String, dynamic>? get _user => user;
+  bool get isLoggedIn => _user != null;
 
+  //login - bejelentkezes
   Future<bool> login(String email, String password) async {
-    isLoading = true;
-    notifyListeners();
+    print("1. Login is starting...");
 
     try {
-      final response = await apiclient.sendApi(
-        endpoint: 'users',
-        method: ApiMethod.get,
-      );
+      final userData = await apiclient.login(email, password);
 
-      List<dynamic> data = response;
+      print("2. Server is communicated: $userData");
 
-      debugPrint("Datas are here: ${data.length} ");
-
-      List<Users> allUsers = data.map((json) => Users.fromJson(json)).toList();
-
-      final user = allUsers.firstWhere(
-        (u) => u.email == email && u.password == password,
-        orElse: () => throw Exception("Not valid login informations"),
-      );
-      currentUser = user;
-      isLoading = false;
-      notifyListeners();
-
-      return true; // ha sikerult true
+      if (userData != null) {
+        user = userData;
+        notifyListeners();
+        return true;
+      }
     } catch (e) {
-      isLoading = false;
-      notifyListeners();
-      print("Error: $e");
-
-      return false;
+      print("3. Error in the provider: $e");
     }
+    print("4. Login is unsuccessful.");
+
+    return false;
+  }
+
+  void logout() {
+    user = null;
+    notifyListeners();
   }
 }

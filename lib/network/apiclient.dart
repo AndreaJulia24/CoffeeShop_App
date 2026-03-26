@@ -4,43 +4,28 @@ import 'package:http/http.dart' as http;
 enum ApiMethod { get, post, delete, put }
 
 class Apiclient {
-  final String baseUrl = 'https://69c33a76b780a9ba03e64c18.mockapi.io';
+  final String baseUrl = 'http://10.0.2.2":3000';
 
-  Future<dynamic> sendApi({
-    required String endpoint,
-    required ApiMethod method,
-    Map<String, dynamic>? body,
-  }) async {
-    final url = Uri.parse('$baseUrl/$endpoint');
-    late http.Response response;
+  Future<Map<String, dynamic>?> login(String email, String password) async {
+    final url = Uri.parse('$baseUrl/users/login');
 
-    switch (method) {
-      case ApiMethod.get:
-        response = await http.get(url);
-        break;
-      case ApiMethod.post:
-        response = await http.post(
-          url,
-          body: jsonEncode(body),
-          headers: {'Content-Type': 'application/json'},
-        );
-        break;
-      case ApiMethod.put:
-        response = await http.put(
-          url,
-          body: jsonEncode(body),
-          headers: {'Content-Type': 'application/json'},
-        );
-        break;
-      case ApiMethod.delete:
-        response = await http.delete(url);
-        break;
-    }
+    try {
+      final response = await http
+          .post(
+            url,
+            headers: {'Content-Type': 'application/json'},
+            body: jsonEncode({'email': email, 'password': password}),
+          )
+          .timeout(const Duration(seconds: 5));
 
-    if (response.statusCode >= 200 && response.statusCode < 300) {
-      return jsonDecode(response.body);
-    } else {
-      throw Exception("Error: ${response.statusCode}");
+      if (response.statusCode > 200 && response.statusCode <= 300) {
+        return jsonDecode(response.body);
+      } else {
+        return null;
+      }
+    } catch (e) {
+      print("Error: $e");
+      return null;
     }
   }
 }

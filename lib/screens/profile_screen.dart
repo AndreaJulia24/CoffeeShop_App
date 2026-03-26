@@ -2,8 +2,8 @@ import 'package:coffee_shop/screens/login_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:coffee_shop/models/users.dart';
 import 'package:coffee_shop/constants/colors.dart';
-//import 'package:provider/provider.dart';
-//import 'package:coffee_shop/provider/user_provider.dart';
+import 'package:provider/provider.dart';
+import 'package:coffee_shop/provider/user_provider.dart';
 
 class ProfileScreen extends StatelessWidget {
   final Users users;
@@ -41,10 +41,15 @@ class ProfileScreen extends StatelessWidget {
             SizedBox(height: 30),
             ElevatedButton(
               style: ElevatedButton.styleFrom(backgroundColor: primaryRed),
-              onPressed: () => Navigator.of(context).pushAndRemoveUntil(
-                MaterialPageRoute(builder: (context) => LoginScreen()),
-                (route) => false,
-              ),
+              onPressed: () {
+                Provider.of<UserProvider>(context, listen: false).logout();
+
+                Navigator.pushAndRemoveUntil(
+                  context,
+                  MaterialPageRoute(builder: (context) => const LoginScreen()),
+                  (route) => false,
+                );
+              },
               child: const Text(
                 "Log out",
                 style: TextStyle(color: primaryWhite),

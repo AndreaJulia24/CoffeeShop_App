@@ -2,6 +2,7 @@ import 'package:coffee_shop/provider/user_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:coffee_shop/constants/colors.dart';
 import 'package:coffee_shop/screens/home_screen.dart';
+import 'package:coffee_shop/models/users.dart';
 import 'package:provider/provider.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -12,6 +13,7 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
+  final nameController = TextEditingController();
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
 
@@ -51,9 +53,26 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
               ),
               const SizedBox(height: 50),
+              //name
+              TextField(
+                controller: nameController,
+                style: const TextStyle(color: primaryWhite),
+                decoration: InputDecoration(
+                  hintText: "Full name",
+                  hintStyle: const TextStyle(color: greyPrimary),
+                  filled: true,
+                  fillColor: darkBrown,
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(16),
+                    borderSide: BorderSide.none,
+                  ),
+                  prefixIcon: const Icon(Icons.person, color: greyPrimary),
+                ),
+              ),
+              const SizedBox(height: 20),
+              //email
               TextField(
                 controller: emailController,
-                keyboardType: TextInputType.emailAddress,
                 style: const TextStyle(color: primaryWhite),
                 decoration: InputDecoration(
                   hintText: "Email address",
@@ -68,6 +87,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
               ),
               const SizedBox(height: 20),
+              //password
               TextField(
                 controller: passwordController,
                 obscureText: true,
@@ -85,76 +105,71 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
               ),
               const SizedBox(height: 40),
-              Consumer<UserProvider>(
-                builder: (context, userProvider, child) {
-                  return SizedBox(
-                    width: double.infinity,
-                    height: 60,
-                    child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: secondaryBrown,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(16),
-                        ),
-                      ),
-                      onPressed: userProvider.isLoading
-                          ? null
-                          : () async {
-                              if (emailController.text.isEmpty ||
-                                  passwordController.text.isEmpty) {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  const SnackBar(
-                                    content: Text("Fill all the fields."),
-                                    backgroundColor: primaryRed,
-                                  ),
-                                );
-                                return;
-                              }
-
-                              final result = await userProvider.login(
-                                emailController.text.trim(),
-                                passwordController.text.trim(),
-                              );
-
-                              if (!context.mounted) return;
-
-                              if (result == true &&
-                                  userProvider.currentUser != null) {
-                                Navigator.pushReplacement(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => HomeScreen(
-                                      users: userProvider.currentUser!,
-                                    ),
-                                  ),
-                                );
-                              } else {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  const SnackBar(
-                                    content: Text(
-                                      "Incorrect email or password",
-                                    ),
-                                    backgroundColor: primaryRed,
-                                  ),
-                                );
-                              }
-                            },
-                      child: userProvider.isLoading
-                          ? const CircularProgressIndicator(
-                              color: primaryWhite,
-                              strokeWidth: 2,
-                            )
-                          : const Text(
-                              "Login",
-                              style: TextStyle(
-                                color: primaryWhite,
-                                fontWeight: FontWeight.w900,
-                                fontSize: 16,
-                              ),
-                            ),
+              //login button
+              SizedBox(
+                width: double.infinity,
+                height: 60,
+                child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: secondaryBrown,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(16),
                     ),
-                  );
-                },
+                  ),
+                  onPressed: () async {
+                    if (nameController.text.isNotEmpty &&
+                        emailController.text.isNotEmpty &&
+                        passwordController.text.isNotEmpty) {
+                      //elerjuk a providert
+                      final userProvider = context.read<UserProvider>();
+
+                      final result = await userProvider.login(
+                        emailController.text,
+                        passwordController.text,
+                      );
+
+                      if (!context.mounted) return; //meg mindig a kepernyon?
+
+                      if (result == true) {
+                        Users user = Users(
+                          name: nameController.text,
+                          email: emailController.text,
+                          password: passwordController.text,
+                          profileImage: '',
+                        );
+
+                        Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => HomeScreen(users: user),
+                          ),
+                        );
+                      } else {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text(
+                              "Unsuccessful login.Check your server.",
+                            ),
+                            backgroundColor: primaryRed,
+                          ),
+                        );
+                      }
+                    } else {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text("Please fill all the fields"),
+                        ),
+                      );
+                    }
+                  },
+                  child: const Text(
+                    "Login",
+                    style: TextStyle(
+                      color: primaryWhite,
+                      fontWeight: FontWeight.w900,
+                    ),
+                  ),
+                ),
               ),
             ],
           ),
