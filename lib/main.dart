@@ -3,8 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:provider/provider.dart';
 import 'firebase_options.dart';
-import 'provider/userProvider.dart';
-import 'screens/welcome_screen.dart';
+import 'provider/user_provider.dart';
 import 'dart:ui';
 
 void main() async {
@@ -12,9 +11,7 @@ void main() async {
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   runApp(
     MultiProvider(
-      providers: [
-        ChangeNotifierProvider(create: (_)=>UserProvider()),
-      ],
+      providers: [ChangeNotifierProvider(create: (_) => UserProvider())],
       child: const MyApp(),
     ),
   );

@@ -1,7 +1,9 @@
+import 'package:coffee_shop/provider/user_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:coffee_shop/constants/colors.dart';
 import 'package:coffee_shop/screens/home_screen.dart';
 import 'package:coffee_shop/models/users.dart';
+import 'package:provider/provider.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -107,14 +109,19 @@ class _LoginScreenState extends State<LoginScreen> {
                       borderRadius: BorderRadiusGeometry.circular(16),
                     ),
                   ),
-                  onPressed: () {
+                  onPressed: () async {
                     if (nameController.text.isNotEmpty &&
                         emailController.text.isNotEmpty &&
                         passwordController.text.isNotEmpty) {
+                      final userProvider = Provider.of<UserProvider>(
+                        context,
+                        listen: false,
+                      );
+
                       Users user = Users(
                         name: nameController.text,
                         email: emailController.text,
-                        pasword: passwordController.text,
+                        password: passwordController.text,
                         profileImage: '',
                       );
 

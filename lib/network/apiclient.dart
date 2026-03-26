@@ -1,72 +1,46 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
-import 'package:coffee_shop/models/users.dart';
-import 'dart:io';
 
-enum ApiType { get, post, delete, put }
+enum ApiMethod { get, post, delete, put }
 
 class Apiclient {
-  final http.Client client;
-
-  Apiclient({required this.client});
-
-  final String url = 'https://69c33a76b780a9ba03e64c18.mockapi.io';
-
-  final String userPath = '/users';
+  final String baseUrl = 'https://69c33a76b780a9ba03e64c18.mockapi.io';
 
   Future<dynamic> sendApi({
-    required String path,
-    required ApiType apiType,
+    required String endpoint,
+    required ApiMethod method,
     Map<String, dynamic>? body,
   }) async {
-    http.Response response;
+    final url = Uri.parse('$baseUrl/$endpoint');
+    late http.Response response;
 
-    switch (apiType) {
-      case ApiType.get:
-        response = await client.get(Uri.parse(url + userPath));
-      case ApiType.post:
-        response = await client.post(Uri.parse(url + userPath));
-      case ApiType.put:
-        response = await client.put(Uri.parse(url + userPath));
-      case ApiType.delete:
-        response = await client.delete(Uri.parse(url + userPath));
+    switch (method) {
+      case ApiMethod.get:
+        response = await http.get(url);
+        break;
+      case ApiMethod.post:
+        response = await http.post(
+          url,
+          body: jsonEncode(body),
+          headers: {'Content-Type': 'application/json'},
+        );
+        break;
+      case ApiMethod.put:
+        response = await http.put(
+          url,
+          body: jsonEncode(body),
+          headers: {'Content-Type': 'application/json'},
+        );
+        break;
+      case ApiMethod.delete:
+        response = await http.delete(url);
+        break;
     }
 
     if (response.statusCode >= 200 && response.statusCode < 300) {
       return jsonDecode(response.body);
     } else {
-      throw Exception("Error: ${response.body}");
+      throw Exception("Error: ${response.statusCode}");
     }
-  }
-
-  Future<List<Users>> getUsers() async {
-    final response = await sendApi(
-      path: userPath,
-      apiType: ApiType.get,
-    );
-    return (response as List).map((user) => Users.fromJson(user)).toList();
-  }
-
-  Future<void> registerUser(String name, String email, String password) async {
-    await sendApi(
-      path: userPath,
-      apiType: ApiType.post,
-      body: {
-        'name': name,
-        'email': email,
-        'password': password,
-      },
-    );
-  }
-
-  Future<void> updateProfile(String id, String name, String email) async {
-    await sendApi(
-      path: userPath,
-      apiType: ApiType.put,     
-      body: {
-        'id': id,
-        'name': name,
-      },
-    );
   }
 }

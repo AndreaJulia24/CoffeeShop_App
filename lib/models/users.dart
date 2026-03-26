@@ -1,13 +1,13 @@
 class Users {
   final String name;
   final String email;
-  final String pasword;
+  final String password;
   final String profileImage;
 
   Users({
     required this.name,
     required this.email,
-    required this.pasword,
+    required this.password,
     required this.profileImage,
   });
 
@@ -15,8 +15,11 @@ class Users {
     return Users(
       name: json['name'] as String,
       email: json['email'] as String,
-      pasword: json['password'] as String,
+      password: json['password'] as String,
       profileImage: json['profileImage'] as String,
     );
+  }
+  Map<String, dynamic> toJson() {
+    return {'name': name, 'email': email, 'password': password};
   }
 }
