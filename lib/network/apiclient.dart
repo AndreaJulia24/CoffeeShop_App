@@ -38,4 +38,35 @@ class Apiclient {
       throw Exception("Error: ${response.body}");
     }
   }
+
+  Future<List<Users>> getUsers() async {
+    final response = await sendApi(
+      path: userPath,
+      apiType: ApiType.get,
+    );
+    return (response as List).map((user) => Users.fromJson(user)).toList();
+  }
+
+  Future<void> registerUser(String name, String email, String password) async {
+    await sendApi(
+      path: userPath,
+      apiType: ApiType.post,
+      body: {
+        'name': name,
+        'email': email,
+        'password': password,
+      },
+    );
+  }
+
+  Future<void> updateProfile(String id, String name, String email) async {
+    await sendApi(
+      path: userPath,
+      apiType: ApiType.put,     
+      body: {
+        'id': id,
+        'name': name,
+      },
+    );
+  }
 }
