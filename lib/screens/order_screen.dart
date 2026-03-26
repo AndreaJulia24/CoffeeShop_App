@@ -222,13 +222,15 @@ class _OrderScreenState extends State<OrderScreen> {
     return TextButton(
       style: TextButton.styleFrom(
         side: BorderSide(
-          color: isSelected ? secondaryBrown : greyPrimary.withOpacity(0.5),
+          color: isSelected
+              ? secondaryBrown
+              : greyPrimary.withValues(alpha: 0.5),
           width: 1.5,
         ),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
         padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 15),
         backgroundColor: isSelected
-            ? lightBrown.withOpacity(0.1)
+            ? lightBrown.withValues(alpha: 0.1)
             : Colors.transparent,
       ),
       onPressed: () {

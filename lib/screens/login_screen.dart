@@ -106,16 +106,18 @@ class _LoginScreenState extends State<LoginScreen> {
                   style: ElevatedButton.styleFrom(
                     backgroundColor: secondaryBrown,
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadiusGeometry.circular(16),
+                      borderRadius: BorderRadius.circular(16),
                     ),
                   ),
                   onPressed: () async {
                     if (nameController.text.isNotEmpty &&
                         emailController.text.isNotEmpty &&
                         passwordController.text.isNotEmpty) {
-                      final userProvider = Provider.of<UserProvider>(
-                        context,
-                        listen: false,
+                      final userProvider = context.read<UserProvider>();
+
+                      await userProvider.login(
+                        emailController.text,
+                        passwordController.text,
                       );
 
                       Users user = Users(
@@ -124,6 +126,8 @@ class _LoginScreenState extends State<LoginScreen> {
                         password: passwordController.text,
                         profileImage: '',
                       );
+
+                      if (!context.mounted) return; //meg mindig a kepernyon?
 
                       Navigator.pushReplacement(
                         context,
