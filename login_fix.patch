@@ -1,0 +1,95 @@
+diff --git a/lib/network/apiclient.dart b/lib/network/apiclient.dart
+index a73722e..d996a4c 100644
+--- a/lib/network/apiclient.dart
++++ b/lib/network/apiclient.dart
+@@ -4,2 +4,3 @@
+
+class Apiclient {
+
+final String baseUrl = 'http://localhost:3000';
+
+// Emulátor esetén a 10.0.2.2 címet kell használni a localhost eléréséhez
+
+final String baseUrl = 'http://10.0.2.2:3000';
+diff --git a/lib/provider/user_provider.dart b/lib/provider/user_provider.dart
+index 0c94541..0f3408a 100644
+--- a/lib/provider/user_provider.dart
++++ b/lib/provider/user_provider.dart
+@@ -10,2 +10,3 @@
+Future login(String email, String password) async {
+
+final userData = _apiClient.login(email, password);
+
+// Az await kulcsszó kötelező, különben lefagy a UI (Signal 3 hiba)
+
+final userData = await _apiClient.login(email, password);
+diff --git a/lib/screens/login_screen.dart b/lib/screens/login_screen.dart
+index d06169c..06103e6 100644
+--- a/lib/screens/login_screen.dart
++++ b/lib/screens/login_screen.dart
+@@ -104,8 +104,15 @@
+
+                 if (result == true) {}
+
+
+                 Navigator.pushReplacement(
+
+
+                   context,
+
+
+                   MaterialPageRoute(
+
+
+                     builder: (context) => HomeScreen(users: user),
+
+
+                   ),
+
+
+                 );
+
+
+                 if (result == true) {
+
+
+                   Navigator.pushReplacement(
+
+
+                     context,
+
+
+                     MaterialPageRoute(
+
+
+                       builder: (context) => HomeScreen(users: user),
+
+
+                     ),
+
+
+                   );
+
+
+                 } else {
+
+
+                   ScaffoldMessenger.of(context).showSnackBar(
+
+
+                     const SnackBar(
+
+
+                       content: Text("Sikertelen belépés! Ellenőrizd az adataidat vagy a szervert!"),
+
+
+                       backgroundColor: Colors.red,
+
+
+                     ),
+
+
+                   );
+
+
+                 }
