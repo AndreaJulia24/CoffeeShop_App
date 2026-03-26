@@ -1,49 +1,177 @@
 import 'package:flutter/material.dart';
 import 'package:coffee_shop/constants/colors.dart';
 import 'package:coffee_shop/models/products.dart';
+import 'package:coffee_shop/provider/cart_provider.dart';
+import 'package:provider/provider.dart';
 
 class CartScreen extends StatelessWidget {
-  final List<Coffee> cartItems;
-
-  const CartScreen({super.key, required this.cartItems});
-
-  double get totalPrice {
-    return cartItems.fold(0, (sum, item) => sum + item.price);
-  }
+  const CartScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final cartProvider = context.watch<CartProvider>();
+    final cartItems = cartProvider.cartItems;
+
     return Scaffold(
       backgroundColor: primaryBrown,
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            const Icon(
-              Icons.shopping_cart_outlined,
-              size: 80,
-              color: primaryWhite,
-            ),
-            const SizedBox(height: 20),
-            Text(
-              " ${cartItems.length} in your cart",
-              style: TextStyle(
-                color: primaryWhite,
-                fontSize: 22,
-                fontWeight: FontWeight.w800,
-              ),
-            ),
-            const SizedBox(height: 10),
-            Text(
-              "Total: ${totalPrice.toStringAsFixed(1)} lei",
-              style: const TextStyle(
-                color: primaryWhite,
-                fontSize: 24,
-                fontWeight: FontWeight.w900,
-              ),
-            ),
-          ],
+      appBar: AppBar(
+        title: const Text(
+          "Shopping Cart",
+          style: TextStyle(color: primaryWhite, fontWeight: FontWeight.w800),
         ),
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        centerTitle: true,
+      ),
+      body: cartItems.isEmpty
+          ? buildEmptyState()
+          : Column(
+              children: [
+                Expanded(
+                  child: ListView.builder(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 20,
+                      vertical: 10,
+                    ),
+                    itemCount: cartItems.length,
+                    itemBuilder: (context, index) {
+                      return buildCartItem(cartItems[index], cartProvider);
+                    },
+                  ),
+                ),
+                buildTotalPrice(cartProvider),
+              ],
+            ),
+    );
+  }
+
+  Widget buildCartItem(Coffee item, CartProvider provider) {
+    return Container(
+      height: 110,
+      margin: const EdgeInsets.only(bottom: 15),
+      decoration: BoxDecoration(
+        color: primaryWhite,
+        borderRadius: BorderRadius.circular(20),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.05),
+            blurRadius: 10,
+            offset: const Offset(0, 5),
+          ),
+        ],
+      ),
+      child: Row(
+        children: [
+          ClipRRect(
+            borderRadius: BorderRadiusGeometry.circular(12),
+            child: Image.network(
+              item.imageUrl,
+              width: 80,
+              height: 80,
+              fit: BoxFit.cover,
+            ),
+          ),
+          Expanded(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(vertical: 15),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    item.name,
+                    style: const TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.w800,
+                    ),
+                  ),
+                  const SizedBox(height: 5),
+                  Text(
+                    "${item.price.toStringAsFixed(2)} lei",
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600,
+                      color: primaryBrown,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+          IconButton(
+            onPressed: () {},
+            icon: Icon(Icons.delete_outline, color: primaryBrown),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget buildEmptyState() {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(Icons.shopping_cart_outlined, size: 80, color: greyPrimary),
+          const SizedBox(height: 20),
+          const Text(
+            "Your cart is empty",
+            style: TextStyle(color: greyPrimary, fontSize: 18),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget buildTotalPrice(CartProvider provider) {
+    return Container(
+      padding: const EdgeInsets.all(25),
+      decoration: BoxDecoration(
+        color: primaryWhite,
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(20),
+          topRight: Radius.circular(20),
+        ),
+        boxShadow: [BoxShadow(color: Colors.black, blurRadius: 10)],
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              const Text(
+                "Total Price",
+                style: TextStyle(fontSize: 16, color: greyPrimary),
+              ),
+              Text(
+                "${provider.totalPrice.toStringAsFixed(2)} lei",
+                style: TextStyle(
+                  fontWeight: FontWeight.w800,
+                  color: primaryBrown,
+                ),
+              ),
+            ],
+          ),
+          SizedBox(height: 20),
+          SizedBox(
+            width: double.infinity,
+            height: 55,
+            child: ElevatedButton(
+              onPressed: () {},
+              style: ElevatedButton.styleFrom(
+                backgroundColor: primaryBrown,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadiusGeometry.circular(15),
+                ),
+              ),
+              child: const Text(
+                "Buy now",
+                style: TextStyle(color: primaryWhite, fontSize: 18),
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }

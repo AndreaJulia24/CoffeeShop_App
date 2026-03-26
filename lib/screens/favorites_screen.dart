@@ -54,7 +54,7 @@ class FavoritesScreen extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: brownforFav,
+        color: brownforFavandCart,
         borderRadius: BorderRadius.circular(16),
       ),
       child: Row(

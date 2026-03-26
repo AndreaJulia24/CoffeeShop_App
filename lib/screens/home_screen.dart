@@ -1,3 +1,4 @@
+import 'package:coffee_shop/provider/cart_provider.dart';
 import 'package:coffee_shop/screens/favorites_screen.dart';
 import 'package:coffee_shop/screens/order_screen.dart';
 import 'package:coffee_shop/widgets/coffee_card.dart';
@@ -10,6 +11,8 @@ import 'package:coffee_shop/screens/profile_screen.dart';
 import 'package:coffee_shop/network/firebase_service.dart';
 import 'dart:math';
 
+import 'package:provider/provider.dart';
+
 class HomeScreen extends StatefulWidget {
   final Users users;
   const HomeScreen({super.key, required this.users});
@@ -20,7 +23,7 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   int selectedIndex = 0;
-  List<Coffee> cartItems = [];
+  // List<Coffee> cartItems = [];
   List<Coffee> favoritesItems = [];
   final Random random = Random();
 
@@ -80,9 +83,7 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   void addToCart(Coffee coffee) {
-    setState(() {
-      cartItems.add(coffee);
-    });
+    context.read<CartProvider>().addToCart(coffee);
 
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
@@ -108,7 +109,7 @@ class _HomeScreenState extends State<HomeScreen> {
     final List<Widget> screens = [
       buildHomeContent(), //0. index -homescreen
       FavoritesScreen(favoriteItems: favoritesItems), //1.index
-      CartScreen(cartItems: cartItems), //2. index
+      const CartScreen(), //2. index
       ProfileScreen(users: widget.users), //3. index profilee
     ];
 
