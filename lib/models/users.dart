@@ -10,4 +10,13 @@ class Users {
     required this.pasword,
     required this.profileImage,
   });
+
+  factory Users.fromJson(Map<String, dynamic> json) {
+    return Users(
+      name: json['name'] as String,
+      email: json['email'] as String,
+      pasword: json['password'] as String,
+      profileImage: json['profileImage'] as String,
+    );
+  }
 }
