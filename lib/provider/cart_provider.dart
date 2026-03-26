@@ -3,7 +3,6 @@ import 'package:coffee_shop/models/products.dart';
 
 class CartProvider extends ChangeNotifier {
   final List<Coffee> cartItems = [];
-  final List<Coffee> favoriteItems = [];
 
   List<Coffee> get _cartItems => cartItems;
 
