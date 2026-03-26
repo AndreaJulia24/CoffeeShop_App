@@ -23,9 +23,9 @@ class UserProvider extends ChangeNotifier {
         method: ApiMethod.get,
       );
 
-      List<dynamic> data = response is String ? jsonDecode(response) : response;
+      List<dynamic> data = response;
 
-      print("Datas incoming.. $data");
+      print("Datas are here: ${data.length} ");
 
       List<Users> allUsers = data.map((json) => Users.fromJson(json)).toList();
 
