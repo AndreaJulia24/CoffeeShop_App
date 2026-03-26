@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:coffee_shop/network/apiclient.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
@@ -25,7 +23,7 @@ class UserProvider extends ChangeNotifier {
 
       List<dynamic> data = response;
 
-      print("Datas are here: ${data.length} ");
+      debugPrint("Datas are here: ${data.length} ");
 
       List<Users> allUsers = data.map((json) => Users.fromJson(json)).toList();
 
