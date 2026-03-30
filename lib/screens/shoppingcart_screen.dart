@@ -39,7 +39,7 @@ class CartScreen extends StatelessWidget {
                     },
                   ),
                 ),
-                buildTotalPrice(cartProvider),
+                buildTotalPrice(cartProvider, context),
               ],
             ),
     );
@@ -55,7 +55,7 @@ class CartScreen extends StatelessWidget {
       ),
       child: Row(
         children: [
-          const SizedBox(width: 5),
+          const SizedBox(width: 15),
           ClipRRect(
             borderRadius: BorderRadiusGeometry.circular(12),
             child: Image.network(
@@ -119,7 +119,7 @@ class CartScreen extends StatelessWidget {
     );
   }
 
-  Widget buildTotalPrice(CoffeeProvider provider) {
+  Widget buildTotalPrice(CoffeeProvider provider, BuildContext context) {
     return Container(
       padding: const EdgeInsets.all(25),
       decoration: BoxDecoration(
@@ -154,16 +154,31 @@ class CartScreen extends StatelessWidget {
             width: double.infinity,
             height: 55,
             child: ElevatedButton(
-              onPressed: () {},
+              onPressed: () {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Text(
+                      "Successful ordering! Thank you for your purchase.",
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.w800,
+                      ),
+                    ),
+                    backgroundColor: Colors.green,
+                    duration: Duration(seconds: 2),
+                  ),
+                );
+                provider.clearCart();
+              },
               style: ElevatedButton.styleFrom(
-                backgroundColor: primaryBrown,
+                backgroundColor: lightBrown,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadiusGeometry.circular(15),
                 ),
               ),
               child: const Text(
                 "Buy now",
-                style: TextStyle(color: primaryWhite, fontSize: 18),
+                style: TextStyle(color: darkBrown, fontSize: 18),
               ),
             ),
           ),
