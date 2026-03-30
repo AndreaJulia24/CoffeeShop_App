@@ -335,15 +335,17 @@ Widget buildSpecialOfferCard(Coffee offer) {
                     color: primaryWhite,
                     fontWeight: FontWeight.w800,
                     fontSize: 10,
+                    fontFamily: 'Poppins',
                   ),
                 ),
               ),
-              const SizedBox(height: 8),
+              const SizedBox(height: 10),
               Text(
                 offer.name,
                 style: const TextStyle(
                   color: primaryWhite,
                   fontSize: 16,
+                  fontFamily: 'Poppins',
                   fontWeight: FontWeight.w800,
                 ),
               ),
@@ -373,7 +375,7 @@ Widget buildCategoryItem(String name, bool isSelected, VoidCallback onTap) {
           name,
           style: TextStyle(
             fontFamily: 'Poppins',
-            fontSize: 14,
+            fontSize: 13,
             fontWeight: FontWeight.w500,
             color: isSelected ? secondaryBrown : primaryWhite,
           ),
