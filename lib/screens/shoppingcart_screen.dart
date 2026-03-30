@@ -171,7 +171,7 @@ class CartScreen extends StatelessWidget {
                 provider.clearCart();
               },
               style: ElevatedButton.styleFrom(
-                backgroundColor: lightBrown,
+                backgroundColor: darkBrown,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadiusGeometry.circular(15),
                 ),

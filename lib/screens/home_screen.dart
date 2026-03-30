@@ -55,6 +55,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
       allproducts = [];
       filteredProducts = [];
+
       coffeesFuture = firebaseService.getProductsByCategory(
         category.toLowerCase(),
       );
@@ -232,7 +233,7 @@ class _HomeScreenState extends State<HomeScreen> {
             const SizedBox(height: 30),
             SizedBox(
               height: 300,
-              child: FutureBuilder(
+              child: FutureBuilder<List<Coffee>>(
                 future: coffeesFuture,
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
