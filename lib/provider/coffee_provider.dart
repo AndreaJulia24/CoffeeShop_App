@@ -14,8 +14,8 @@ class CoffeeProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  void removeFromCart(Coffee coffee) {
-    _cartItems.remove(coffee);
+  void clearCart() {
+    _cartItems.clear();
     notifyListeners();
   }
 

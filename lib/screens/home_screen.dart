@@ -1,4 +1,4 @@
-import 'package:coffee_shop/provider/coffee_provider.dart'; // Marad a CartProvider import
+import 'package:coffee_shop/provider/coffee_provider.dart';
 import 'package:coffee_shop/screens/favorites_screen.dart';
 import 'package:coffee_shop/screens/order_screen.dart';
 import 'package:coffee_shop/widgets/coffee_card.dart';
@@ -26,7 +26,6 @@ class _HomeScreenState extends State<HomeScreen> {
   List<Coffee> favoritesItems = [];
   final Random random = Random();
 
-  // VÁLTOZÓK, AMIK KELLEK A MŰKÖDÉSHEZ
   List<Coffee> allproducts = [];
   List<Coffee> filteredProducts = [];
   final FirebaseService firebaseService = FirebaseService();
@@ -54,7 +53,6 @@ class _HomeScreenState extends State<HomeScreen> {
       _isDrinksSelected = category == 'Drinks';
       _isCakesSelected = category == 'Cakes';
 
-      // Itt ürítjük a listát, hogy az új kategória töltődjön be
       allproducts = [];
       filteredProducts = [];
       coffeesFuture = firebaseService.getProductsByCategory(
@@ -66,15 +64,12 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     super.initState();
-    // Alapértelmezett betöltés a kávékkal
     coffeesFuture = firebaseService.getProductsByCategory('coffees');
     loadDailySpecial();
   }
 
-  // JAVÍTOTT GLOBÁLIS KERESŐ (async lett és minden kategóriát lekér)
   void runFilter(String enteredKeyword) async {
     if (enteredKeyword.isEmpty) {
-      // Ha üres a kereső, visszatöltjük az aktuális kategóriát
       String category = _isCoffeesSelected
           ? 'coffees'
           : _isTeasSelected
@@ -88,7 +83,6 @@ class _HomeScreenState extends State<HomeScreen> {
       return;
     }
 
-    // Lekérjük az összes terméket a kereséshez
     List<Coffee> searchBar = await firebaseService.getAllProductsForSearch();
 
     List<Coffee> results = searchBar
@@ -104,16 +98,12 @@ class _HomeScreenState extends State<HomeScreen> {
         .toList();
 
     setState(() {
-      filteredProducts = results;
-      // Frissítjük a FutureBuilder-t a találatokkal
       coffeesFuture = Future.value(results);
     });
   }
 
   void addToCart(Coffee coffee) {
-    context.read<CoffeeProvider>().addToCart(
-      coffee,
-    ); // CoffeeProvider-t használsz
+    context.read<CoffeeProvider>().addToCart(coffee);
 
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
@@ -138,7 +128,7 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     final List<Widget> screens = [
       buildHomeContent(),
-      FavoritesScreen(favoriteItems: favoritesItems),
+      const FavoritesScreen(),
       const CartScreen(),
       ProfileScreen(users: widget.users),
     ];
@@ -201,7 +191,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   onChanged: (value) => runFilter(value),
                   style: const TextStyle(color: primaryWhite),
                   decoration: const InputDecoration(
-                    hintText: "Search anything...", // Átírva "coffee"-ról
+                    hintText: "Search anything...",
                     hintStyle: TextStyle(color: greyPrimary),
                     prefixIcon: Icon(Icons.search, color: greyPrimary),
                     suffixIcon: Icon(Icons.tune, color: greyPrimary),
@@ -259,7 +249,6 @@ class _HomeScreenState extends State<HomeScreen> {
                     );
                   }
 
-                  // A snapshot adatait közvetlenül a filteredProducts-ba tesszük
                   final currentProducts = snapshot.data ?? [];
                   filteredProducts = currentProducts;
 

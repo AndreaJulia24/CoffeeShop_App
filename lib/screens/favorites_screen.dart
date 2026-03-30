@@ -1,15 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:coffee_shop/constants/colors.dart';
 import 'package:coffee_shop/models/products.dart';
+import 'package:coffee_shop/provider/coffee_provider.dart';
+import 'package:provider/provider.dart';
 
 class FavoritesScreen extends StatelessWidget {
   //final Coffee coffee;
-  final List<Coffee> favoriteItems;
+  //final List<Coffee> favoriteItems;
 
-  const FavoritesScreen({super.key, required this.favoriteItems});
+  const FavoritesScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final provider = context.watch<CoffeeProvider>();
+    final favoriteItems = provider.favorites;
     return Scaffold(
       backgroundColor: primaryBrown,
       appBar: AppBar(

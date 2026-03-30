@@ -2,8 +2,6 @@ import 'package:coffee_shop/provider/user_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:coffee_shop/constants/colors.dart';
 import 'package:coffee_shop/screens/login_screen.dart';
-import 'package:coffee_shop/screens/home_screen.dart';
-import 'package:coffee_shop/models/users.dart';
 import 'package:provider/provider.dart';
 
 class SignUpScreen extends StatefulWidget {
@@ -164,16 +162,18 @@ class _SignUpScreenState extends State<SignUpScreen> {
                           passwordController.text,
                           birthDateController.text,
                         );
-
                         if (result && context.mounted) {
-                          Users loggedInUser = Users.fromJson(
-                            userProvider.user!,
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text("Account created! Please login."),
+                              backgroundColor: Colors.green,
+                            ),
                           );
+
                           Navigator.pushReplacement(
                             context,
                             MaterialPageRoute(
-                              builder: (context) =>
-                                  HomeScreen(users: loggedInUser),
+                              builder: (context) => const LoginScreen(),
                             ),
                           );
                         } else {

@@ -7,5 +7,14 @@
     "birthDate": "2004-5-24",
     "profileImage": "",
     "status": "success"
+  },
+  {
+    "id": "1774902576232",
+    "name": "Caroline Forbes",
+    "email": "carolinef@gmail.com",
+    "password": "Klaus12",
+    "birthDate": "2000-1-13",
+    "profileImage": "",
+    "status": "success"
   }
 ]

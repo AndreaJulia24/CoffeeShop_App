@@ -4,7 +4,6 @@ import 'package:coffee_shop/constants/colors.dart';
 import 'package:coffee_shop/screens/home_screen.dart';
 import 'package:coffee_shop/models/users.dart';
 import 'package:provider/provider.dart';
-import 'package:coffee_shop/screens/sign_up_screen.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -152,13 +151,34 @@ class _LoginScreenState extends State<LoginScreen> {
               const SizedBox(height: 20),
               //register button
               TextButton(
-                onPressed: () {
-                  Navigator.pushReplacement(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => const SignUpScreen(),
-                    ),
-                  );
+                onPressed: () async {
+                  if (emailController.text.isNotEmpty &&
+                      passwordController.text.isNotEmpty) {
+                    final userProvider = context.read<UserProvider>();
+
+                    // Meghívjuk a logint
+                    final result = await userProvider.login(
+                      emailController.text,
+                      passwordController.text,
+                    );
+
+                    if (result && context.mounted) {
+                      Users loggedInUser = Users.fromJson(userProvider.user!);
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => HomeScreen(users: loggedInUser),
+                        ),
+                      );
+                    } else {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text("Login failed!"),
+                          backgroundColor: primaryRed,
+                        ),
+                      );
+                    }
+                  }
                 },
                 child: const Text(
                   "Don't have an account? Sign Up",
