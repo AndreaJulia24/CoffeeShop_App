@@ -50,30 +50,25 @@ class CartScreen extends StatelessWidget {
       height: 110,
       margin: const EdgeInsets.only(bottom: 15),
       decoration: BoxDecoration(
-        color: primaryWhite,
+        color: darkBrown,
         borderRadius: BorderRadius.circular(20),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.05),
-            blurRadius: 10,
-            offset: const Offset(0, 5),
-          ),
-        ],
       ),
       child: Row(
         children: [
+          const SizedBox(width: 5),
           ClipRRect(
             borderRadius: BorderRadiusGeometry.circular(12),
             child: Image.network(
               item.imageUrl,
-              width: 80,
-              height: 80,
+              width: 100,
+              height: 90,
               fit: BoxFit.cover,
             ),
           ),
+          const SizedBox(width: 10),
           Expanded(
             child: Padding(
-              padding: const EdgeInsets.symmetric(vertical: 15),
+              padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -83,6 +78,7 @@ class CartScreen extends StatelessWidget {
                     style: const TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.w800,
+                      color: primaryWhite,
                     ),
                   ),
                   const SizedBox(height: 5),
@@ -91,7 +87,7 @@ class CartScreen extends StatelessWidget {
                     style: TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.w600,
-                      color: primaryBrown,
+                      color: primaryWhite,
                     ),
                   ),
                 ],
@@ -100,7 +96,7 @@ class CartScreen extends StatelessWidget {
           ),
           IconButton(
             onPressed: () {},
-            icon: Icon(Icons.delete_outline, color: primaryBrown),
+            icon: Icon(Icons.delete_outline, color: primaryWhite),
           ),
         ],
       ),
