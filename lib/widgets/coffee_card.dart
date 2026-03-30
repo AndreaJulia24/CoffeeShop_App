@@ -76,9 +76,8 @@ class CoffeeCard extends StatelessWidget {
                 Text(
                   "${coffee.price} lei",
                   style: const TextStyle(
-                    fontFamily: 'Poppins',
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
+                    fontSize: 16,
+                    fontWeight: FontWeight.w900,
                     color: Colors.white,
                   ),
                 ),

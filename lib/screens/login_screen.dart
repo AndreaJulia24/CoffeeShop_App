@@ -4,6 +4,7 @@ import 'package:coffee_shop/constants/colors.dart';
 import 'package:coffee_shop/screens/home_screen.dart';
 import 'package:coffee_shop/models/users.dart';
 import 'package:provider/provider.dart';
+import 'package:coffee_shop/screens/sign_up_screen.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -54,7 +55,6 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
               ),
               const SizedBox(height: 50),
-              //email
               TextField(
                 controller: emailController,
                 style: const TextStyle(color: primaryWhite),
@@ -71,7 +71,6 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
               ),
               const SizedBox(height: 20),
-              //password
               TextField(
                 controller: passwordController,
                 obscureText: true,
@@ -103,9 +102,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   onPressed: () async {
                     if (emailController.text.isNotEmpty &&
                         passwordController.text.isNotEmpty) {
-                      //elerjuk a providert
                       final userProvider = context.read<UserProvider>();
-
                       final result = await userProvider.login(
                         emailController.text,
                         passwordController.text,
@@ -113,7 +110,6 @@ class _LoginScreenState extends State<LoginScreen> {
 
                       if (result && context.mounted) {
                         Users loggedInUser = Users.fromJson(userProvider.user!);
-
                         Navigator.pushReplacement(
                           context,
                           MaterialPageRoute(
@@ -125,7 +121,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         ScaffoldMessenger.of(context).showSnackBar(
                           const SnackBar(
                             content: Text(
-                              "Unsuccessful login.Check your server.",
+                              "Unsuccessful login. Check your server.",
                             ),
                             backgroundColor: primaryRed,
                           ),
@@ -149,40 +145,23 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
               ),
               const SizedBox(height: 20),
-              //register button
-              TextButton(
-                onPressed: () async {
-                  if (emailController.text.isNotEmpty &&
-                      passwordController.text.isNotEmpty) {
-                    final userProvider = context.read<UserProvider>();
-
-                    // Meghívjuk a logint
-                    final result = await userProvider.login(
-                      emailController.text,
-                      passwordController.text,
+              Center(
+                child: TextButton(
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const SignUpScreen(),
+                      ),
                     );
-
-                    if (result && context.mounted) {
-                      Users loggedInUser = Users.fromJson(userProvider.user!);
-                      Navigator.pushReplacement(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => HomeScreen(users: loggedInUser),
-                        ),
-                      );
-                    } else {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content: Text("Login failed!"),
-                          backgroundColor: primaryRed,
-                        ),
-                      );
-                    }
-                  }
-                },
-                child: const Text(
-                  "Don't have an account? Sign Up",
-                  style: TextStyle(color: primaryWhite),
+                  },
+                  child: const Text(
+                    "Don't have an account? Sign Up",
+                    style: TextStyle(
+                      color: primaryWhite,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
                 ),
               ),
             ],

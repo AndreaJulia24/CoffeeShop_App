@@ -49,7 +49,7 @@ class WelcomeScreen extends StatelessWidget {
                         textAlign: TextAlign.center,
                         style: TextStyle(
                           color: primaryWhite,
-                          fontSize: 30,
+                          fontSize: 25,
                           fontWeight: FontWeight.w900,
                           fontFamily: 'Poppins',
                           height: 1.3,
