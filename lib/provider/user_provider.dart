@@ -31,6 +31,38 @@ class UserProvider extends ChangeNotifier {
 
     return false;
   }
+  //register - regisztracio
+
+  Future<bool> register(
+    String name,
+    String email,
+    String password,
+    String birthDate,
+  ) async {
+    print("1. Registration is starting...");
+
+    try {
+      final userData = await apiclient.register(
+        name,
+        email,
+        password,
+        birthDate,
+      );
+
+      print("2. Server is communicated: $userData");
+
+      if (userData != null) {
+        user = userData;
+        notifyListeners();
+        return true;
+      }
+    } catch (e) {
+      print("3. Error in the provider: $e");
+    }
+    print("4. Registration is unsuccessful.");
+
+    return false;
+  }
 
   void logout() {
     user = null;

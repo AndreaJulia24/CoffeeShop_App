@@ -15,9 +15,7 @@ class WelcomeScreen extends StatelessWidget {
           Container(
             decoration: const BoxDecoration(
               image: DecorationImage(
-                image: NetworkImage(
-                  'https://img.freepik.com/premium-photo/heart-shaped-arrangement-coffee-beans-symbolizes-love-coffee-vertical-mobile-wallpaper_896558-53249.jpg',
-                ),
+                image: AssetImage("assets/images/welcome.jpg"),
                 fit: BoxFit.cover,
               ),
             ),

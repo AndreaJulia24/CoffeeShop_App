@@ -1,4 +1,4 @@
-import 'package:coffee_shop/provider/cart_provider.dart';
+import 'package:coffee_shop/provider/coffee_provider.dart'; // Marad a CartProvider import
 import 'package:coffee_shop/screens/favorites_screen.dart';
 import 'package:coffee_shop/screens/order_screen.dart';
 import 'package:coffee_shop/widgets/coffee_card.dart';
@@ -23,9 +23,15 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   int selectedIndex = 0;
-  // List<Coffee> cartItems = [];
   List<Coffee> favoritesItems = [];
   final Random random = Random();
+
+  // VÁLTOZÓK, AMIK KELLEK A MŰKÖDÉSHEZ
+  List<Coffee> allproducts = [];
+  List<Coffee> filteredProducts = [];
+  final FirebaseService firebaseService = FirebaseService();
+  late Future<List<Coffee>> coffeesFuture;
+  Coffee? specialOffer;
 
   void loadDailySpecial() async {
     List<Coffee> offers = await firebaseService.getSpecialOffer();
@@ -47,43 +53,67 @@ class _HomeScreenState extends State<HomeScreen> {
       _isTeasSelected = category == 'Teas';
       _isDrinksSelected = category == 'Drinks';
       _isCakesSelected = category == 'Cakes';
+
+      // Itt ürítjük a listát, hogy az új kategória töltődjön be
+      allproducts = [];
+      filteredProducts = [];
+      coffeesFuture = firebaseService.getProductsByCategory(
+        category.toLowerCase(),
+      );
     });
   }
-
-  List<Coffee> filteredProducts = [];
-  final FirebaseService firebaseService = FirebaseService();
-  late Future<List<Coffee>> coffeesFuture;
-  Coffee? specialOffer;
 
   @override
   void initState() {
     super.initState();
-    //filteredProducts = allproducts;
-    coffeesFuture = firebaseService
-        .getCoffees(); //itt inditja el a lekerest a firebasebol
+    // Alapértelmezett betöltés a kávékkal
+    coffeesFuture = firebaseService.getProductsByCategory('coffees');
     loadDailySpecial();
   }
 
-  void runFilter(String enteredKeyword) {
-    List<Coffee> results = [];
+  // JAVÍTOTT GLOBÁLIS KERESŐ (async lett és minden kategóriát lekér)
+  void runFilter(String enteredKeyword) async {
     if (enteredKeyword.isEmpty) {
-      results = allproducts;
-    } else {
-      results = allproducts
-          .where(
-            (coffee) => coffee.name.toLowerCase().contains(
-              enteredKeyword.toLowerCase(),
-            ),
-          )
-          .toList();
+      // Ha üres a kereső, visszatöltjük az aktuális kategóriát
+      String category = _isCoffeesSelected
+          ? 'coffees'
+          : _isTeasSelected
+          ? 'teas'
+          : _isDrinksSelected
+          ? 'drinks'
+          : 'cakes';
+      setState(() {
+        coffeesFuture = firebaseService.getProductsByCategory(category);
+      });
+      return;
     }
+
+    // Lekérjük az összes terméket a kereséshez
+    List<Coffee> searchBar = await firebaseService.getAllProductsForSearch();
+
+    List<Coffee> results = searchBar
+        .where(
+          (coffee) =>
+              coffee.name.toLowerCase().contains(
+                enteredKeyword.toLowerCase(),
+              ) ||
+              coffee.description.toLowerCase().contains(
+                enteredKeyword.toLowerCase(),
+              ),
+        )
+        .toList();
+
     setState(() {
       filteredProducts = results;
+      // Frissítjük a FutureBuilder-t a találatokkal
+      coffeesFuture = Future.value(results);
     });
   }
 
   void addToCart(Coffee coffee) {
-    context.read<CartProvider>().addToCart(coffee);
+    context.read<CoffeeProvider>().addToCart(
+      coffee,
+    ); // CoffeeProvider-t használsz
 
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
@@ -107,10 +137,10 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     final List<Widget> screens = [
-      buildHomeContent(), //0. index -homescreen
-      FavoritesScreen(favoriteItems: favoritesItems), //1.index
-      const CartScreen(), //2. index
-      ProfileScreen(users: widget.users), //3. index profilee
+      buildHomeContent(),
+      FavoritesScreen(favoriteItems: favoritesItems),
+      const CartScreen(),
+      ProfileScreen(users: widget.users),
     ];
 
     return Scaffold(
@@ -149,7 +179,7 @@ class _HomeScreenState extends State<HomeScreen> {
               children: [
                 Text(
                   "Hello, ${widget.users.name}",
-                  style: TextStyle(
+                  style: const TextStyle(
                     fontFamily: 'Poppins',
                     fontSize: 20,
                     color: primaryWhite,
@@ -169,9 +199,9 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
                 child: TextField(
                   onChanged: (value) => runFilter(value),
-                  style: TextStyle(color: primaryWhite),
-                  decoration: InputDecoration(
-                    hintText: "Search coffee...",
+                  style: const TextStyle(color: primaryWhite),
+                  decoration: const InputDecoration(
+                    hintText: "Search anything...", // Átírva "coffee"-ról
                     hintStyle: TextStyle(color: greyPrimary),
                     prefixIcon: Icon(Icons.search, color: greyPrimary),
                     suffixIcon: Icon(Icons.tune, color: greyPrimary),
@@ -209,7 +239,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
               ],
             ),
-            const SizedBox(height: 30), //products card list ----
+            const SizedBox(height: 30),
             SizedBox(
               height: 300,
               child: FutureBuilder(
@@ -223,22 +253,20 @@ class _HomeScreenState extends State<HomeScreen> {
                   if (snapshot.hasError) {
                     return const Center(
                       child: Text(
-                        "Error loading coffees",
+                        "Error loading products",
                         style: TextStyle(color: primaryWhite),
                       ),
                     );
                   }
-                  final coffees = snapshot.data ?? [];
 
-                  if (allproducts.isEmpty && coffees.isNotEmpty) {
-                    allproducts.addAll(coffees);
-                    filteredProducts = allproducts;
-                  }
+                  // A snapshot adatait közvetlenül a filteredProducts-ba tesszük
+                  final currentProducts = snapshot.data ?? [];
+                  filteredProducts = currentProducts;
 
-                  if (coffees.isEmpty) {
+                  if (filteredProducts.isEmpty) {
                     return const Center(
                       child: Text(
-                        "There is none available coffees.",
+                        "No products available.",
                         style: TextStyle(color: primaryWhite),
                       ),
                     );
@@ -249,23 +277,16 @@ class _HomeScreenState extends State<HomeScreen> {
                     padding: const EdgeInsets.symmetric(horizontal: 20),
                     itemCount: filteredProducts.length,
                     itemBuilder: (context, index) {
+                      final currentItem = filteredProducts[index];
                       return CoffeeCard(
-                        coffee: filteredProducts[index],
-                        onAddTap: () => addToCart(filteredProducts[index]),
+                        coffee: currentItem,
+                        onAddTap: () => addToCart(currentItem),
                         onDetailsTap: () async {
                           await Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (context) => OrderScreen(
-                                coffee: filteredProducts[index],
-                                addingIntoCart: () =>
-                                    addToCart(filteredProducts[index]),
-                                invertFavorite: () =>
-                                    invertFavorite(filteredProducts[index]),
-                                isFavorite: favoritesItems.contains(
-                                  filteredProducts[index],
-                                ),
-                              ),
+                              builder: (context) =>
+                                  OrderScreen(coffee: currentItem),
                             ),
                           );
                           setState(() {});

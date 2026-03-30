@@ -4,6 +4,7 @@ import 'package:coffee_shop/constants/colors.dart';
 import 'package:coffee_shop/screens/home_screen.dart';
 import 'package:coffee_shop/models/users.dart';
 import 'package:provider/provider.dart';
+import 'package:coffee_shop/screens/sign_up_screen.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -54,23 +55,6 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
               ),
               const SizedBox(height: 50),
-              //name
-              TextField(
-                controller: nameController,
-                style: const TextStyle(color: primaryWhite),
-                decoration: InputDecoration(
-                  hintText: "Full name",
-                  hintStyle: const TextStyle(color: greyPrimary),
-                  filled: true,
-                  fillColor: darkBrown,
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(16),
-                    borderSide: BorderSide.none,
-                  ),
-                  prefixIcon: const Icon(Icons.person, color: greyPrimary),
-                ),
-              ),
-              const SizedBox(height: 20),
               //email
               TextField(
                 controller: emailController,
@@ -118,8 +102,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     ),
                   ),
                   onPressed: () async {
-                    if (nameController.text.isNotEmpty &&
-                        emailController.text.isNotEmpty &&
+                    if (emailController.text.isNotEmpty &&
                         passwordController.text.isNotEmpty) {
                       //elerjuk a providert
                       final userProvider = context.read<UserProvider>();
@@ -129,20 +112,14 @@ class _LoginScreenState extends State<LoginScreen> {
                         passwordController.text,
                       );
 
-                      if (!context.mounted) return; //meg mindig a kepernyon?
-
-                      if (result == true) {
-                        Users user = Users(
-                          name: nameController.text,
-                          email: emailController.text,
-                          password: passwordController.text,
-                          profileImage: '',
-                        );
+                      if (result && context.mounted) {
+                        Users loggedInUser = Users.fromJson(userProvider.user!);
 
                         Navigator.pushReplacement(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => HomeScreen(users: user),
+                            builder: (context) =>
+                                HomeScreen(users: loggedInUser),
                           ),
                         );
                       } else {
@@ -170,6 +147,22 @@ class _LoginScreenState extends State<LoginScreen> {
                       fontWeight: FontWeight.w900,
                     ),
                   ),
+                ),
+              ),
+              const SizedBox(height: 20),
+              //register button
+              TextButton(
+                onPressed: () {
+                  Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const SignUpScreen(),
+                    ),
+                  );
+                },
+                child: const Text(
+                  "Don't have an account? Sign Up",
+                  style: TextStyle(color: primaryWhite),
                 ),
               ),
             ],

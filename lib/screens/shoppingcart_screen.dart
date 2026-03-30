@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:coffee_shop/constants/colors.dart';
 import 'package:coffee_shop/models/products.dart';
-import 'package:coffee_shop/provider/cart_provider.dart';
+import 'package:coffee_shop/provider/coffee_provider.dart';
 import 'package:provider/provider.dart';
 
 class CartScreen extends StatelessWidget {
@@ -9,7 +9,7 @@ class CartScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final cartProvider = context.watch<CartProvider>();
+    final cartProvider = context.watch<CoffeeProvider>();
     final cartItems = cartProvider.cartItems;
 
     return Scaffold(
@@ -45,7 +45,7 @@ class CartScreen extends StatelessWidget {
     );
   }
 
-  Widget buildCartItem(Coffee item, CartProvider provider) {
+  Widget buildCartItem(Coffee item, CoffeeProvider provider) {
     return Container(
       height: 110,
       margin: const EdgeInsets.only(bottom: 15),
@@ -123,7 +123,7 @@ class CartScreen extends StatelessWidget {
     );
   }
 
-  Widget buildTotalPrice(CartProvider provider) {
+  Widget buildTotalPrice(CoffeeProvider provider) {
     return Container(
       padding: const EdgeInsets.all(25),
       decoration: BoxDecoration(

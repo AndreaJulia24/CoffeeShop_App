@@ -1,20 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:coffee_shop/constants/colors.dart';
 import 'package:coffee_shop/models/products.dart';
+import 'package:coffee_shop/provider/coffee_provider.dart';
+import 'package:provider/provider.dart';
 
 class OrderScreen extends StatefulWidget {
   final Coffee coffee;
-  final VoidCallback addingIntoCart;
-  final VoidCallback invertFavorite;
-  final bool isFavorite;
 
-  const OrderScreen({
-    super.key,
-    required this.coffee,
-    required this.addingIntoCart,
-    required this.invertFavorite,
-    required this.isFavorite,
-  });
+  const OrderScreen({super.key, required this.coffee});
 
   @override
   State<OrderScreen> createState() => _OrderScreenState();
@@ -22,15 +15,50 @@ class OrderScreen extends StatefulWidget {
 
 class _OrderScreenState extends State<OrderScreen> {
   int quantity = 1;
-  bool isFavorite = false;
   String selectedSize = 'M';
+  late double currentSizePrice;
 
   final List<String> sizes = ['S', 'M', 'L'];
 
-  double get totalPrice => widget.coffee.price * quantity;
+  @override
+  void initState() {
+    super.initState();
+    currentSizePrice = widget.coffee.currentSizePrice;
+  }
+
+  void updateSizePrice(String size) {
+    setState(() {
+      selectedSize = size;
+
+      // MAI JAVÍTÁS: Teánál és üdítőnél az ár fix marad, kávénál és sütinél változik
+      if (widget.coffee.category.toLowerCase() == 'teas' ||
+          widget.coffee.category.toLowerCase() == 'drinks') {
+        currentSizePrice = widget.coffee.price;
+      } else {
+        switch (size) {
+          case 'S':
+            currentSizePrice = widget.coffee.price * 0.9;
+            break;
+          case 'M':
+            currentSizePrice = widget.coffee.price;
+            break;
+          case 'L':
+            // Süti esetén a Whole (L) nagyobb felár
+            currentSizePrice = widget.coffee.category.toLowerCase() == 'cakes'
+                ? widget.coffee.price * 1.5
+                : widget.coffee.price * 1.2;
+            break;
+        }
+      }
+    });
+  }
+
+  double get totalPrice => currentSizePrice * quantity;
 
   @override
   Widget build(BuildContext context) {
+    final provider = context.watch<CoffeeProvider>();
+    final isFavorite = provider.isFavorite(widget.coffee);
     return Scaffold(
       backgroundColor: primaryBrown,
       appBar: AppBar(
@@ -47,20 +75,21 @@ class _OrderScreenState extends State<OrderScreen> {
         centerTitle: true,
         actions: [
           IconButton(
-            icon: Icon(
-              widget.isFavorite ? Icons.favorite : Icons.favorite_border,
-            ),
-            color: widget.isFavorite ? primaryRed : primaryWhite,
+            icon: Icon(isFavorite ? Icons.favorite : Icons.favorite_border),
+            color: isFavorite ? primaryRed : primaryWhite,
             onPressed: () {
-              widget.invertFavorite();
+              provider.toggleFavorite(widget.coffee);
 
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
-                  content: Text("${widget.coffee.name} added to favorites!"),
+                  content: Text(
+                    isFavorite
+                        ? "${widget.coffee.name} removed from favorites!"
+                        : "${widget.coffee.name} added to favorites!",
+                  ),
+                  duration: const Duration(seconds: 1),
                 ),
               );
-
-              Navigator.pop(context);
             },
           ),
         ],
@@ -69,22 +98,21 @@ class _OrderScreenState extends State<OrderScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            //----------a kep berakva hozza--------------
             Padding(
               padding: const EdgeInsets.all(25.0),
               child: ClipRRect(
-                borderRadius: BorderRadiusGeometry.circular(16),
+                borderRadius: BorderRadius.circular(16),
                 child: Image.network(
                   widget.coffee.imageUrl,
                   height: 220,
                   width: double.infinity,
                   fit: BoxFit.cover,
+                  cacheWidth: 400,
                 ),
               ),
             ),
-            //--------------nev es leiras------------------
             Padding(
-              padding: const EdgeInsetsGeometry.symmetric(horizontal: 25.0),
+              padding: const EdgeInsets.symmetric(horizontal: 25.0),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -113,7 +141,7 @@ class _OrderScreenState extends State<OrderScreen> {
                   ),
                   const Divider(height: 40, thickness: 1.0, color: brownie),
                   const SizedBox(height: 10),
-                  Text(
+                  const Text(
                     'Description',
                     style: TextStyle(
                       fontSize: 30,
@@ -124,24 +152,53 @@ class _OrderScreenState extends State<OrderScreen> {
                   const SizedBox(height: 16),
                   Text(
                     widget.coffee.description,
-                    style: TextStyle(fontSize: 15, color: greyPrimary),
+                    style: const TextStyle(fontSize: 15, color: greyPrimary),
                   ),
                   const SizedBox(height: 25),
                   const Text(
-                    "Size",
+                    "Options",
                     style: TextStyle(
                       fontSize: 30,
                       fontWeight: FontWeight.bold,
                       color: primaryWhite,
                     ),
                   ),
+                  const SizedBox(height: 10),
+                  Text(
+                    // Dinamikus felirat a kategória alapján
+                    widget.coffee.category.toLowerCase() == 'cakes'
+                        ? "Choose your cake portion:"
+                        : widget.coffee.category.toLowerCase() == 'teas'
+                        ? "Choose your tea temperature:"
+                        : widget.coffee.category.toLowerCase() == 'drinks'
+                        ? "Choose your ice level:"
+                        : "Choose your coffee size:",
+                    style: const TextStyle(fontSize: 15, color: greyPrimary),
+                  ),
                   const SizedBox(height: 15),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      buildSizeButton('S'),
-                      buildSizeButton('M'),
-                      buildSizeButton('L'),
+                      // Logikai ágaztatás a gombokhoz
+                      if (widget.coffee.category.toLowerCase() == 'cakes') ...[
+                        buildCakeButton('S', '1 Slice'),
+                        buildCakeButton('M', '2 Slices'),
+                        buildCakeButton('L', 'Whole'),
+                      ] else if (widget.coffee.category.toLowerCase() ==
+                          'teas') ...[
+                        buildTeaButton('Hot', 'Hot'),
+                        buildTeaButton('Room', 'Room'),
+                        buildTeaButton('Iced', 'Iced'),
+                      ] else if (widget.coffee.category.toLowerCase() ==
+                          'drinks') ...[
+                        buildDrinksButton('S', 'No Ice'),
+                        buildDrinksButton('M', 'Regular'),
+                        buildDrinksButton('L', 'Extra Ice'),
+                      ] else ...[
+                        buildSizeButton('S'),
+                        buildSizeButton('M'),
+                        buildSizeButton('L'),
+                      ],
                     ],
                   ),
                 ],
@@ -173,7 +230,7 @@ class _OrderScreenState extends State<OrderScreen> {
                 ),
                 const SizedBox(height: 4),
                 Text(
-                  "${widget.coffee.price.toStringAsFixed(2)} lei",
+                  "${currentSizePrice.toStringAsFixed(2)} lei",
                   style: const TextStyle(
                     color: primaryWhite,
                     fontSize: 24,
@@ -188,11 +245,21 @@ class _OrderScreenState extends State<OrderScreen> {
                 minimumSize: const Size(200, 60),
                 elevation: 5,
                 shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadiusGeometry.circular(20),
+                  borderRadius: BorderRadius.circular(20),
                 ),
               ),
               onPressed: () {
-                widget.addingIntoCart();
+                final coffeeToCart = Coffee(
+                  name: widget.coffee.name,
+                  description: widget.coffee.description,
+                  price: widget.coffee.price,
+                  imageUrl: widget.coffee.imageUrl,
+                  rating: widget.coffee.rating,
+                  category: widget.coffee.category,
+                  selectedSize: selectedSize,
+                  currentSizePrice: currentSizePrice,
+                );
+                provider.addToCart(coffeeToCart);
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(
                     content: Text("${widget.coffee.name} added to cart!"),
@@ -201,7 +268,7 @@ class _OrderScreenState extends State<OrderScreen> {
                   ),
                 );
               },
-              child: Text(
+              child: const Text(
                 "Add to cart",
                 style: TextStyle(
                   color: primaryWhite,
@@ -218,31 +285,50 @@ class _OrderScreenState extends State<OrderScreen> {
 
   Widget buildSizeButton(String size) {
     bool isSelected = selectedSize == size;
+    return buildGenericButton(size, size, isSelected);
+  }
 
-    return TextButton(
-      style: TextButton.styleFrom(
-        side: BorderSide(
+  Widget buildCakeButton(String value, String text) {
+    bool isSelected = selectedSize == value;
+    return buildGenericButton(value, text, isSelected);
+  }
+
+  Widget buildTeaButton(String value, String text) {
+    bool isSelected = selectedSize == value;
+    return buildGenericButton(value, text, isSelected);
+  }
+
+  Widget buildDrinksButton(String value, String text) {
+    bool isSelected = selectedSize == value;
+    return buildGenericButton(value, text, isSelected);
+  }
+
+  Widget buildGenericButton(String value, String text, bool isSelected) {
+    return GestureDetector(
+      onTap: () => updateSizePrice(value),
+      child: Container(
+        width: 100,
+        padding: const EdgeInsets.symmetric(vertical: 15),
+        decoration: BoxDecoration(
           color: isSelected
-              ? secondaryBrown
-              : greyPrimary.withValues(alpha: 0.5),
-          width: 1.5,
+              ? lightBrown.withValues(alpha: 0.2)
+              : Colors.transparent,
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(
+            color: isSelected
+                ? secondaryBrown
+                : greyPrimary.withValues(alpha: 0.5),
+            width: 1.5,
+          ),
         ),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-        padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 15),
-        backgroundColor: isSelected
-            ? lightBrown.withValues(alpha: 0.1)
-            : Colors.transparent,
-      ),
-      onPressed: () {
-        setState(() {
-          selectedSize = size;
-        });
-      },
-      child: Text(
-        size,
-        style: TextStyle(
-          color: isSelected ? secondaryBrown : primaryWhite,
-          fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+        child: Center(
+          child: Text(
+            text,
+            style: TextStyle(
+              color: isSelected ? secondaryBrown : primaryWhite,
+              fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+            ),
+          ),
         ),
       ),
     );
