@@ -178,7 +178,7 @@ class CartScreen extends StatelessWidget {
               ),
               child: const Text(
                 "Buy now",
-                style: TextStyle(color: darkBrown, fontSize: 18),
+                style: TextStyle(color: primaryBrown, fontSize: 18),
               ),
             ),
           ),
